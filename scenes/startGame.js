@@ -8,18 +8,18 @@ class startGame extends Phaser.Scene {
 
   }
   create() {
-    /*
-      gameSettings = JSON.parse(localStorage.getItem('SDsave'));
-      if (gameSettings === null || gameSettings.length <= 0) {
-        localStorage.setItem('SDsave', JSON.stringify(defaultValues));
-        gameSettings = defaultValues;
-      }
-    */
-    this.cameras.main.setBackgroundColor(0xf7eac6);
 
-    var title = this.add.bitmapText(game.config.width / 2, 100, 'topaz', 'SquareDots', 150).setOrigin(.5).setTint(0xc76210);
+    /*  gameData = JSON.parse(localStorage.getItem('DefenseSave'));
+     if (gameData === null || gameData.length <= 0) {
+       localStorage.setItem('DefenseSave', JSON.stringify(defaultValues));
+       gameData = defaultValues;
+     } */
 
-    var startTime = this.add.bitmapText(game.config.width / 2 - 50, 275, 'topaz', 'Play Time', 50).setOrigin(0, .5).setTint(0x000000);
+    this.cameras.main.setBackgroundColor(0x000000);
+
+    var title = this.add.bitmapText(game.config.width / 2, 100, 'topaz', 'PixelDefense', 150).setOrigin(.5).setTint(0xffffff);
+
+    var startTime = this.add.bitmapText(game.config.width / 2 - 50, 275, 'topaz', 'Play', 50).setOrigin(0, .5).setTint(0xffffff);
     startTime.setInteractive();
     startTime.on('pointerdown', this.clickHandler, this);
 

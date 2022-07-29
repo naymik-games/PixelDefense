@@ -76,18 +76,45 @@ class playGame extends Phaser.Scene {
 
 
     this.drawLines(graphics, this.rows, this.cols);
-    this.map = []
-    for (let y = 0; y < this.rows; y++) {
-      var temp = []
-      for (let x = 0; x < this.cols; x++) {
-        temp.push(0)
+
+    if (this.level.customMap) {
+      this.map = this.level.map
+      for (let y = 0; y < this.map.length; y++) {
+
+        for (let x = 0; x < this.map[0].length; x++) {
+          if (this.map[y][x] == 1) {
+            var block = this.add.image(offset + x * cellSize, offset + y * cellSize, 'block', 0)
+          }
+        }
+
       }
-      this.map.push(temp)
+    } else {
+      this.map = []
+      for (let y = 0; y < this.rows; y++) {
+        var temp = []
+        for (let x = 0; x < this.cols; x++) {
+          temp.push(0)
+        }
+        this.map.push(temp)
+      }
+      this.placeRandomBlocks(this.level.numberOfBlocks)
     }
+
 
     this.placeSpawnPoint(this.level.numberOfSpawnPoints)
     this.placeEndPoint(1)
-    this.placeRandomBlocks(this.level.numberOfBlocks)
+    /*  this.map = []
+     for (let y = 0; y < this.rows; y++) {
+       var temp = []
+       for (let x = 0; x < this.cols; x++) {
+         temp.push(0)
+       }
+       this.map.push(temp)
+     }
+ 
+     this.placeSpawnPoint(this.level.numberOfSpawnPoints)
+     this.placeEndPoint(1)
+     this.placeRandomBlocks(this.level.numberOfBlocks) */
     // console.log(this.map)
 
     finder = new EasyStar.js();
@@ -124,7 +151,7 @@ class playGame extends Phaser.Scene {
         var enemy = enemies.get();
         if (enemy) {
           console.log(this.onWave)
-          enemy.upgrade(enemyTypes[this.level.waves[this.onWave].waveEnemies[this.launchNum]])
+          enemy.setType(enemyTypes[this.level.waves[this.onWave].waveEnemies[this.launchNum]])
           enemy.setActive(true);
           enemy.setVisible(true);
           enemy.startOnPath(this);
@@ -189,7 +216,7 @@ class playGame extends Phaser.Scene {
         console.log('done')
         this.landed++
         console.log(this.landed)
-        money.health--
+        money.health -= this.level.enemyHitForHealth
         this.UI.healthText.setText(money.health)
         this.runCheck()
         enemy.healthbar.setVisible(false);
@@ -232,6 +259,13 @@ class playGame extends Phaser.Scene {
     for (let b = 0; b < count; b++) {
       var done = false
       while (!done) {
+        if (b == 0) {
+          var i = Phaser.Math.Between(0, Math.floor(this.rows / 4))
+          var j = Phaser.Math.Between(0, Math.floor(this.cols / 2))
+        } else {
+          var i = Phaser.Math.Between(0, Math.floor(this.rows / 4))
+          var j = Phaser.Math.Between(Math.floor(this.cols / 2), this.cols - 1)
+        }
         var i = Phaser.Math.Between(0, Math.floor(this.rows / 4))
         var j = Phaser.Math.Between(0, this.cols - 1)
         if (this.map[i][j] == BLANK) {
@@ -283,7 +317,7 @@ class playGame extends Phaser.Scene {
   setSafeZone(center) {
     for (let n = 0; n < neighborDirections.length; n++) {
       const nei = neighborDirections[n];
-      if (this.validPick(center.i + nei[0], center.j + nei[1])) {
+      if (this.validPick(center.i + nei[0], center.j + nei[1]) && this.map[center.i + nei[0]][center.j + nei[1]] == BLANK) {
         var tile = this.map[center.i + nei[0]][center.j + nei[1]] = NOTOWER
       }
 
@@ -339,7 +373,7 @@ class playGame extends Phaser.Scene {
     if (this.canPlaceTurret(this.selectedTile.i, this.selectedTile.j)) {
       this.map[this.selectedTile.i][this.selectedTile.j] = tower + TOWERBASE
       var image = new Turret(this, offset + this.selectedTile.j * cellSize, offset + this.selectedTile.i * cellSize, 'towers', tower);
-      image.upgrade(towers[tower])
+      image.setType(towers[tower])
 
       /*  var turret = turrets.get();
        if (turret) {
@@ -428,7 +462,7 @@ var Enemy = new Phaser.Class({
       }); */
 
     },
-  upgrade: function (template) {
+  setType: function (template) {
     //template = typeof template === 'undefined' ? {} : template;
 
     /* var keys = Object.keys(template);
@@ -575,7 +609,7 @@ class Turret extends Phaser.GameObjects.Image {
     }
 
   }
-  upgrade(template) {
+  setType(template) {
     //template = typeof template === 'undefined' ? {} : template;
     var keys = Object.keys(template);
     for (var i = 0; i < keys.length; i++) {
