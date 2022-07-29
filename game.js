@@ -10,6 +10,7 @@ var turrets;
 var currentGame
 var ENEMY_SPEED = 1 / 2500;
 var BULLET_DAMAGE = 50;
+var d = new Date();
 let neighborDirections = [[0, 1], [1, 1], [1, 0], [1, -1], [0, -1], [-1, -1], [-1, 0], [-1, 1]]
 //grid types
 const BLANK = 0
@@ -18,7 +19,7 @@ const SPAWN = 2
 const END = 3
 const NOTOWER = 4
 const TOWERBASE = 5
-
+const TOWERUPBASE = 11
 let spawnPoints = []
 let endPoints = []
 let spawnAlt = 0
@@ -36,7 +37,8 @@ window.onload = function () {
     physics: {
       default: 'arcade'
     },
-    scene: [preloadGame, startGame, playGame, UI, towerMenu, sellMenu, waveDone]
+    pixelArt: true,
+    scene: [preloadGame, startGame, playGame, UI, towerMenu, sellMenu, waveDone, gameOver]
   }
   game = new Phaser.Game(gameConfig);
   window.focus();
@@ -55,6 +57,17 @@ class playGame extends Phaser.Scene {
 
   }
   create() {
+    if (load == 'new') {
+      this.onWave = 0
+    } else {
+      this.onWave = gameData.onWave
+    }
+
+
+
+    enemies = this.physics.add.group({ classType: Enemy, runChildUpdate: true });
+    turrets = this.add.group({ runChildUpdate: true });
+    bullets = this.physics.add.group({ classType: Bullet, runChildUpdate: true });
     this.level = levels[onLevel]
 
 
@@ -62,7 +75,7 @@ class playGame extends Phaser.Scene {
     this.landed = 0
     this.launchNum = 0
 
-    this.onWave = 0
+
     this.cameras.main.setBackgroundColor(0x000000);
     this.UI = this.scene.get('UI');
     var graphics = this.add.graphics();
@@ -77,32 +90,43 @@ class playGame extends Phaser.Scene {
 
     this.drawLines(graphics, this.rows, this.cols);
 
-    if (this.level.customMap) {
-      this.map = this.level.map
-      for (let y = 0; y < this.map.length; y++) {
+    if (load == 'new') {
+      money.amount = this.level.startAmount
+      money.health = this.level.startHealth
+      if (this.level.customMap) {
+        this.map = this.level.map
+        for (let y = 0; y < this.map.length; y++) {
 
-        for (let x = 0; x < this.map[0].length; x++) {
-          if (this.map[y][x] == 1) {
-            var block = this.add.image(offset + x * cellSize, offset + y * cellSize, 'block', 0)
+          for (let x = 0; x < this.map[0].length; x++) {
+            if (this.map[y][x] == 1) {
+              var block = this.add.image(offset + x * cellSize, offset + y * cellSize, 'block', 0)
+            }
           }
-        }
 
-      }
-    } else {
-      this.map = []
-      for (let y = 0; y < this.rows; y++) {
-        var temp = []
-        for (let x = 0; x < this.cols; x++) {
-          temp.push(0)
         }
-        this.map.push(temp)
+      } else {
+        this.map = []
+        for (let y = 0; y < this.rows; y++) {
+          var temp = []
+          for (let x = 0; x < this.cols; x++) {
+            temp.push(0)
+          }
+          this.map.push(temp)
+        }
+        this.placeRandomBlocks(this.level.numberOfBlocks)
       }
-      this.placeRandomBlocks(this.level.numberOfBlocks)
+
+
+      this.placeSpawnPoint(this.level.numberOfSpawnPoints)
+      this.placeEndPoint(1)
+    } else {
+      money = gameData.playerData
+      this.map = gameData.map
+      this.loadMap()
+      // this.loadTowers()
     }
 
 
-    this.placeSpawnPoint(this.level.numberOfSpawnPoints)
-    this.placeEndPoint(1)
     /*  this.map = []
      for (let y = 0; y < this.rows; y++) {
        var temp = []
@@ -123,11 +147,7 @@ class playGame extends Phaser.Scene {
 
 
 
-    enemies = this.physics.add.group({ classType: Enemy, runChildUpdate: true });
 
-    turrets = this.add.group({ runChildUpdate: true });
-
-    bullets = this.physics.add.group({ classType: Bullet, runChildUpdate: true });
 
 
     /* this.healthText = this.add.bitmapText(85, 1550, 'topaz', money.health, 80).setOrigin(.5).setTint(0xcbf7ff).setAlpha(1);
@@ -169,33 +189,53 @@ class playGame extends Phaser.Scene {
     finder.calculate();
   }
   runCheck() {
-    console.log('killed ' + this.killedInWave)
-    console.log('landed ' + this.landed)
+    if (money.health <= 0) {
+      this.scene.pause('playGame')
+      this.scene.pause('UI')
+      this.scene.launch('gameOver', { outcome: 'lose' })
+    }
     if (this.killedInWave + this.landed == this.level.waves[this.onWave].waveEnemies.length) {
-      this.time.delayedCall(1000, () => {
-        this.scene.pause('playGame')
-        this.scene.pause('UI')
-        this.scene.launch('waveDone', { killed: this.killedInWave, landed: this.landed })
-        this.endWave()
-      })
+      this.onWave++
+      if (this.onWave == this.level.numberOfWaves) {
+        this.time.delayedCall(1000, () => {
+
+          this.scene.pause('playGame')
+          this.scene.pause('UI')
+          this.scene.launch('gameOver', { outcome: 'win' })
+
+        })
+      } else {
+        this.time.delayedCall(1000, () => {
+          this.saveProgress()
+          this.scene.pause('playGame')
+          this.scene.pause('UI')
+          this.scene.launch('waveDone', { killed: this.killedInWave, landed: this.landed })
+          this.endWave()
+        })
+      }
+
 
 
     }
   }
   endWave() {
-    this.onWave++
-    if (this.onWave < this.level.numberOfWaves) {
-      this.UI.startWave.setInteractive()
-      this.UI.startWave.setAlpha(1)
-      this.UI.waveText.setText(this.onWave + 1)
-      this.landed = 0
-      this.killedInWave = 0
-      this.launchNum = 0
-      this.placeRandomBlocks(this.level.waves[this.onWave].addBlocks)
-    } else {
-      alert('level completed')
-    }
 
+    this.UI.startWave.setInteractive()
+    this.UI.startWave.setAlpha(1)
+    this.UI.waveText.setText(this.onWave + 1)
+    this.landed = 0
+    this.killedInWave = 0
+    this.launchNum = 0
+    this.placeRandomBlocks(this.level.waves[this.onWave].addBlocks)
+
+
+  }
+  saveProgress() {
+    gameData.onLevel = onLevel
+    gameData.onWave = this.onWave
+    gameData.playerData = money
+    gameData.map = this.map
+    localStorage.setItem('DefenseSave', JSON.stringify(gameData));
   }
   movePlayer(route, enemy, speed) {
     enemy.tweens = [];
@@ -384,16 +424,47 @@ class playGame extends Phaser.Scene {
     }
     finder.setGrid(this.map)
   }
+  loadMap() {
+    for (let y = 0; y < this.map.length; y++) {
+
+      for (let x = 0; x < this.map[0].length; x++) {
+        if (this.map[y][x] >= TOWERBASE) {
+          var towerNum = this.map[y][x] - TOWERBASE
+          var image = new Turret(this, offset + x * cellSize, offset + y * cellSize, 'towers', towerNum);
+          image.setType(towers[towerNum])
+
+        } else if (this.map[y][x] == SPAWN) {
+          var block = this.add.image(offset + x * cellSize, offset + y * cellSize, 'block', 2)
+          spawnPoints.push({ i: y, j: x })
+        } else if (this.map[y][x] == END) {
+          var block = this.add.image(offset + x * cellSize, offset + y * cellSize, 'block', 1)
+          endPoints.push({ i: y, j: x })
+        } else if (this.map[y][x] == BLOCK) {
+          var block = this.add.image(offset + x * cellSize, offset + y * cellSize, 'block', 0)
+        }
+      }
+
+    }
+  }
   removeTower() {
+    this.map[this.selectedTile.i][this.selectedTile.j] = BLANK
     towerAtLocation.graphics.clear()
     towerAtLocation.setActive(false);
     towerAtLocation.setVisible(false);
     towerAtLocation = null
+
   }
-  addBullet(x, y, angle) {
+  upgradeTower() {
+    this.map[this.selectedTile.i][this.selectedTile.j] += TOWERUPBASE
+    towerAtLocation.upgradeTower()
+    towerAtLocation = null
+  }
+  addBullet(x, y, angle, type) {
+    console.log('type' + type)
     var bullet = bullets.get();
     if (bullet) {
-      bullet.fire(x, y, angle);
+      console.log(type)
+      bullet.fire(x, y, angle, type);
     }
   }
   damageEnemy(enemy, bullet) {
@@ -405,7 +476,7 @@ class playGame extends Phaser.Scene {
       bullet.setVisible(false);
 
       // decrease the enemy hp with BULLET_DAMAGE
-      enemy.receiveDamage(bullet.power, this);
+      enemy.receiveDamage(bullet.power, this, bullet.type);
     }
   }
   addScore() {
@@ -442,12 +513,14 @@ var Enemy = new Phaser.Class({
 
       this.end = endPoints[0]
       //console.log(this.spawn)
+      this.nextTic = 1000
       this.name = ''
       this.hp = 0
       this.reward = 0
       this.speed = 0
       this.frame = 0
       this.health = 0
+      this.stunned = false
       this.healthbar = scene.add.text(0, 0, "22", { fontSize: '25px', fill: '#fff' });
       this.healthbar.setOrigin(0, 0);
       /* this.emitter = scene.add.particles('particle').createEmitter({
@@ -497,8 +570,17 @@ var Enemy = new Phaser.Class({
       }
     }.bind(this));
   },
-  receiveDamage: function (damage, scene) {
-    this.health -= damage;
+  receiveDamage: function (damage, scene, type) {
+    if (type == 'stun') {
+      this.timeline.pause()
+      this.stunned = true
+
+      var timestamp = d.getTime()
+      console.log(timestamp)
+    } else {
+      this.health -= damage;
+    }
+
     this.setAlpha(.5)
     // if hp drops below 0 we deactivate this enemy
     if (this.health <= 0) {
@@ -534,7 +616,17 @@ var Enemy = new Phaser.Class({
     this.healthbar.setText(this.health)
     this.healthbar.x = this.x - this.healthbar.width / 2;
     this.healthbar.y = this.y - this.height;
+    if (this.stunned) {
+
+      /*  if (time > this.nextTic) {
+         this.stunned = false
+ 
+         this.timeline.resume()
+ 
+       } */
+    }
   }
+
 
 });
 
@@ -550,87 +642,7 @@ function getEnemy(x, y, distance) {
 
 
 
-class Turret extends Phaser.GameObjects.Image {
-  constructor(scene, x, y, texture, frame) {
-    super(scene, x, y, texture, frame);
-    // ...
-    this.nextTic = 0;
-    //this.radius = 1
-    this.canFire = false
-    this.targetAquired = false
 
-    this.graphics = scene.add.graphics({ lineStyle: { width: 1, color: 0xffffff, alpha: .5 }, fillStyle: { color: 0xffffff, alpha: 1 } });
-
-    // this.graphics.strokeCircleShape(this.circle)
-    scene.add.existing(this);
-
-    turrets.add(this)
-  }
-  update(time, delta) {
-    if (time > this.nextTic) {
-      this.fire();
-      this.nextTic = time + this.fireRate;
-    }
-    var enemy = this.checkEnemy(this.x, this.y, this.range, 'blank');
-    if (enemy) {
-
-      var angle = Phaser.Math.Angle.Between(this.x, this.y, enemy.x, enemy.y);
-      //addBullet(this.x, this.y, angle);
-      this.angle = (angle + Math.PI / 2) * Phaser.Math.RAD_TO_DEG;
-    }
-
-  }
-
-
-
-  checkEnemy(x, y, distance, notthisone) {
-    var enemyUnits = enemies.getChildren();
-    for (var i = 0; i < enemyUnits.length; i++) {
-      if (enemyUnits[i].active && Phaser.Math.Distance.Between(x, y, enemyUnits[i].x, enemyUnits[i].y) < distance && enemyUnits[i] != notthisone) {
-        return enemyUnits[i];
-      }
-    }
-    return false;
-  }
-  fire() {
-    var range, enemy, angle;
-    enemy = this.checkEnemy(this.x, this.y, this.range, 'blank');
-    if (enemy) {
-
-      //makes sure the stunned enemy is not hit twice
-      //but causes towers to randomly disappear and reappear?
-      // if(enemy.follower.stunned){
-      //     enemy = this.checkEnemy(this.x, this.y, range, enemy);
-      // }
-
-      angle = Phaser.Math.Angle.Between(this.x, this.y, enemy.x, enemy.y);
-      addBullet(this.x, this.y, angle, this.power, this.bulletSpeed);
-      this.angle = (angle + Math.PI / 2) * Phaser.Math.RAD_TO_DEG;
-    }
-
-  }
-  setType(template) {
-    //template = typeof template === 'undefined' ? {} : template;
-    var keys = Object.keys(template);
-    for (var i = 0; i < keys.length; i++) {
-      var key = keys[i];
-      this[key] = template[key];
-    }
-
-    // this.circle.setTo(this.circle.x, this.circle.y, this.radius)
-    this.circle = new Phaser.Geom.Circle(this.x, this.y, offset + this.radius * cellSize);
-    this.range = offset + this.radius * cellSize;
-
-    this.setFrame(this.frameNum)
-
-    this.graphics.clear()
-    this.graphics.strokeCircleShape(this.circle)
-    // if (template.cost) this.totalCost += template.cost;
-  }
-  // ...
-
-  // preUpdate(time, delta) {}
-}
 
 
 
@@ -654,14 +666,18 @@ var Bullet = new Phaser.Class({
       this.lifespan = 0;
       this.power = 0
       this.speed = Phaser.Math.GetSpeed(0, 1);
+      this.type = 'projectile'
     },
 
-  fire: function (x, y, angle, power, speed) {
+  fire: function (x, y, angle, power, speed, type) {
     this.setActive(true);
     this.setVisible(true);
+    //addBullet(this.x, this.y, angle, this.power, this.bulletSpeed, this.type);
     //  Bullets fire from the middle of the screen to the given x/y
     this.setPosition(x, y);
     this.speed = Phaser.Math.GetSpeed(speed, 1);
+    this.type = type
+    console.log(this.speed)
     this.power = power
     //  we don't need to rotate the bullets as they are round
     //    this.setRotation(angle);
@@ -669,7 +685,8 @@ var Bullet = new Phaser.Class({
     this.dx = Math.cos(angle);
     this.dy = Math.sin(angle);
 
-    this.lifespan = 1000;
+    this.lifespan = 1000 //* this.speed;
+
   },
 
   update: function (time, delta) {
@@ -685,9 +702,10 @@ var Bullet = new Phaser.Class({
   }
 
 });
-function addBullet(x, y, angle, power, speed) {
+function addBullet(x, y, angle, power, speed, type) {
   var bullet = bullets.get();
   if (bullet) {
-    bullet.fire(x, y, angle, power, speed);
+    console.log(type)
+    bullet.fire(x, y, angle, power, speed, type);
   }
 }

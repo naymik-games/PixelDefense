@@ -12,6 +12,7 @@ var filesToCache = [
   '/scenes/sellMenu.js',
   '/scenes/towerMenu.js',
   '/scenes/waveDone.js',
+  '/scenes/gameOver.js',
   '/scenes/UI.js',
 
   '/assets/fonts/topaz.png',
@@ -19,7 +20,7 @@ var filesToCache = [
 
   '/classes/button.js',
   '/classes/settings.js',
-
+  '/classes/towers.js',
 
 
   '/assets/sprites/blank.png',
