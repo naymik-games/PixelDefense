@@ -20,6 +20,7 @@ const END = 3
 const NOTOWER = 4
 const TOWERBASE = 5
 const TOWERUPBASE = 11
+
 let spawnPoints = []
 let endPoints = []
 let spawnAlt = 0
@@ -93,6 +94,7 @@ class playGame extends Phaser.Scene {
     if (load == 'new') {
       money.amount = this.level.startAmount
       money.health = this.level.startHealth
+      //preset map
       if (this.level.customMap) {
         this.map = this.level.map
         for (let y = 0; y < this.map.length; y++) {
@@ -105,15 +107,34 @@ class playGame extends Phaser.Scene {
 
         }
       } else {
-        this.map = []
-        for (let y = 0; y < this.rows; y++) {
-          var temp = []
-          for (let x = 0; x < this.cols; x++) {
-            temp.push(0)
+        //else choose random map. One is just blocks, other is rooms
+        var mapType = Phaser.Math.Between(4, 5)
+        if (mapType < 4) {
+          this.map = []
+          for (let y = 0; y < this.rows; y++) {
+            var temp = []
+            for (let x = 0; x < this.cols; x++) {
+              temp.push(0)
+            }
+            this.map.push(temp)
           }
-          this.map.push(temp)
+          this.placeRandomBlocks(this.level.numberOfBlocks)
+        } else {
+          var map = new Rooms(22, 14, 3, 5, 13)
+          this.map = map.dungeon
+
+          for (let y = 0; y < this.map.length; y++) {
+
+            for (let x = 0; x < this.map[0].length; x++) {
+              if (this.map[y][x] == 1) {
+                var block = this.add.image(offset + x * cellSize, offset + y * cellSize, 'block', 0)
+              }
+            }
+
+          }
         }
-        this.placeRandomBlocks(this.level.numberOfBlocks)
+        /*       */
+
       }
 
 
@@ -143,13 +164,25 @@ class playGame extends Phaser.Scene {
 
     finder = new EasyStar.js();
     finder.setGrid(this.map)
-    finder.setAcceptableTiles([0, 3, 4])
+    finder.setAcceptableTiles([0, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 16, 17, 18, 19, 20, 23, 24, 25, 26])
 
+    finder.setTileCost(5, 5);
+    finder.setTileCost(6, 5);
+    finder.setTileCost(7, 5);
+    finder.setTileCost(8, 5);
+    finder.setTileCost(9, 5);
+    finder.setTileCost(10, 5);
+    finder.setTileCost(11, 5);
+    finder.setTileCost(12, 5);
 
-
-
-
-
+    finder.setTileCost(16, 8);
+    finder.setTileCost(17, 8);
+    finder.setTileCost(18, 8);
+    finder.setTileCost(19, 8);
+    finder.setTileCost(20, 8);
+    finder.setTileCost(21, 8);
+    finder.setTileCost(22, 8);
+    finder.setTileCost(23, 8);
     /* this.healthText = this.add.bitmapText(85, 1550, 'topaz', money.health, 80).setOrigin(.5).setTint(0xcbf7ff).setAlpha(1);
     this.moneyText = this.add.bitmapText(385, 1550, 'topaz', money.amount, 80).setOrigin(.5).setTint(0xcbf7ff).setAlpha(1); */
 
@@ -170,8 +203,8 @@ class playGame extends Phaser.Scene {
       callback: function () {
         var enemy = enemies.get();
         if (enemy) {
-          console.log(this.onWave)
-          enemy.setType(enemyTypes[this.level.waves[this.onWave].waveEnemies[this.launchNum]])
+
+          enemy.setType(enemyTypes[this.level.waves[this.onWave].waveEnemies[this.launchNum]], this.onWave)
           enemy.setActive(true);
           enemy.setVisible(true);
           enemy.startOnPath(this);
@@ -380,6 +413,8 @@ class playGame extends Phaser.Scene {
 
 
     if (this.map[i][j] == BLANK) {
+      this.scene.pause()
+      this.scene.pause('UI')
       this.scene.launch('towerMenu')
     } else if (this.map[i][j] >= TOWERBASE) {
       var towersUnits = turrets.getChildren(),
@@ -394,12 +429,14 @@ class playGame extends Phaser.Scene {
         }
       }
       if (towerAtLocation) {
+        this.scene.pause()
+        this.scene.pause('UI')
         this.scene.launch('sellMenu')
         // towerXY.x = x;
         // towerXY.y = y;
         //level.scene.launch('SellUpgrade');
         //level.scene.moveAbove(currentLevel, 'SellUpgrade');
-        console.log('tower here')
+        // console.log('tower here')
       }
     }
     //this.scene.launch('towerMenu')
@@ -412,8 +449,8 @@ class playGame extends Phaser.Scene {
 
     if (this.canPlaceTurret(this.selectedTile.i, this.selectedTile.j)) {
       this.map[this.selectedTile.i][this.selectedTile.j] = tower + TOWERBASE
-      var image = new Turret(this, offset + this.selectedTile.j * cellSize, offset + this.selectedTile.i * cellSize, 'towers', tower);
-      image.setType(towers[tower])
+      var image = new Turret(this, offset + this.selectedTile.j * cellSize, offset + this.selectedTile.i * cellSize, 'towers', tower, this.selectedTile, this.onWave);
+      image.setType(towers[tower], false)
 
       /*  var turret = turrets.get();
        if (turret) {
@@ -428,10 +465,18 @@ class playGame extends Phaser.Scene {
     for (let y = 0; y < this.map.length; y++) {
 
       for (let x = 0; x < this.map[0].length; x++) {
+
         if (this.map[y][x] >= TOWERBASE) {
-          var towerNum = this.map[y][x] - TOWERBASE
+          if (this.map[y][x] >= TOWERBASE + TOWERUPBASE) {
+            var towerNum = this.map[y][x] - (TOWERBASE + TOWERUPBASE)
+            var upgrade = true
+          } else {
+            var towerNum = this.map[y][x] - TOWERBASE
+            var upgrade = false
+          }
+
           var image = new Turret(this, offset + x * cellSize, offset + y * cellSize, 'towers', towerNum);
-          image.setType(towers[towerNum])
+          image.setType(towers[towerNum], upgrade)
 
         } else if (this.map[y][x] == SPAWN) {
           var block = this.add.image(offset + x * cellSize, offset + y * cellSize, 'block', 2)
@@ -484,168 +529,6 @@ class playGame extends Phaser.Scene {
   }
 
 }
-
-
-
-
-
-
-
-
-var Enemy = new Phaser.Class({
-
-  Extends: Phaser.GameObjects.Image,
-
-  initialize:
-
-    function Enemy(scene) {
-
-      Phaser.GameObjects.Image.call(this, scene, offset + spawnPoints[spawnAlt].j * cellSize, offset + spawnPoints[spawnAlt].i * cellSize, 'rover', 0);
-      this.setScale(.8)
-      this.spawn = spawnPoints[spawnAlt]
-      if (spawnPoints.length > 1) {
-        if (spawnAlt == 0) {
-          spawnAlt = 1
-        } else {
-          spawnAlt = 0
-        }
-      }
-
-      this.end = endPoints[0]
-      //console.log(this.spawn)
-      this.nextTic = 1000
-      this.name = ''
-      this.hp = 0
-      this.reward = 0
-      this.speed = 0
-      this.frame = 0
-      this.health = 0
-      this.stunned = false
-      this.healthbar = scene.add.text(0, 0, "22", { fontSize: '25px', fill: '#fff' });
-      this.healthbar.setOrigin(0, 0);
-      /* this.emitter = scene.add.particles('particle').createEmitter({
-
-        speed: { min: -800, max: 800 },
-        angle: { min: 0, max: 360 },
-        scale: { start: 0.3, end: 0 },
-        blendMode: 'SCREEN',
-        //active: false,
-        lifespan: 300,
-        gravityY: 800
-      }); */
-
-    },
-  setType: function (template) {
-    //template = typeof template === 'undefined' ? {} : template;
-
-    /* var keys = Object.keys(template);
-    for (var i = 0; i < keys.length; i++) {
-      var key = keys[i];
-      this[key] = template[key];
-    } */
-
-    this.name = template.name
-    this.hp = template.hp
-    this.reward = template.reward
-    this.speed = template.speed
-    this.frame = template.frame
-
-    this.health = this.hp
-    this.setFrame(this.frame)
-
-    // if (template.cost) this.totalCost += template.cost;
-  },
-  startOnPath: function (scene) {
-
-    this.healthbar.setVisible(true);
-    this.setAlpha(1)
-    finder.findPath(this.spawn.j, this.spawn.i, this.end.j, this.end.i, function (route) {
-      console.log('finding...')
-      if (route === null) {
-        console.log("Path was not found.");
-      } else {
-        //console.log("Path was found. The first Point is " + route[0].x + " " + route[0].y);
-        // console.log(route)
-        scene.movePlayer(route, this, this.speed)
-      }
-    }.bind(this));
-  },
-  receiveDamage: function (damage, scene, type) {
-    if (type == 'stun') {
-      this.timeline.pause()
-      this.stunned = true
-
-      var timestamp = d.getTime()
-      console.log(timestamp)
-    } else {
-      this.health -= damage;
-    }
-
-    this.setAlpha(.5)
-    // if hp drops below 0 we deactivate this enemy
-    if (this.health <= 0) {
-
-      var emitter = scene.add.particles('particle_color').createEmitter({
-
-        speed: { min: -300, max: 300 },
-        angle: { min: 0, max: 360 },
-        scale: { start: 2, end: .25 },
-        alpha: { start: 1, end: 0 },
-        blendMode: 'SCREEN',
-        lifespan: 300,
-        frame: [0, 1, 2, 3]
-      });
-      emitter.explode(25, this.x, this.y);
-
-
-
-
-      this.timeline.stop()
-      money.amount += this.reward
-      scene.UI.moneyText.setText(money.amount)
-      this.setPosition(offset + this.spawn.j * cellSize, offset + this.spawn.i * cellSize)
-      scene.killedInWave++
-      scene.runCheck()
-      this.healthbar.setVisible(false);
-      this.setActive(false);
-      this.setVisible(false);
-      console.log(scene.killedInWave)
-    }
-  },
-  update: function (time, delta) {
-    this.healthbar.setText(this.health)
-    this.healthbar.x = this.x - this.healthbar.width / 2;
-    this.healthbar.y = this.y - this.height;
-    if (this.stunned) {
-
-      /*  if (time > this.nextTic) {
-         this.stunned = false
- 
-         this.timeline.resume()
- 
-       } */
-    }
-  }
-
-
-});
-
-function getEnemy(x, y, distance) {
-  var enemyUnits = enemies.getChildren();
-  for (var i = 0; i < enemyUnits.length; i++) {
-    if (enemyUnits[i].active && Phaser.Math.Distance.Between(x, y, enemyUnits[i].x, enemyUnits[i].y) < distance)
-      return enemyUnits[i];
-  }
-  return false;
-}
-
-
-
-
-
-
-
-
 
 
 

@@ -81,6 +81,8 @@ class sellMenu extends Phaser.Scene {
     this.UI.moneyText.setText(money.amount)
     this.Main.removeTower()
     this.scene.stop()
+    this.scene.resume('playGame')
+    this.scene.resume('UI')
   }
   upgradeTower() {
     money.amount += towerAtLocation.upGradeCost;
@@ -88,6 +90,8 @@ class sellMenu extends Phaser.Scene {
     this.UI.moneyText.setText(money.amount)
     this.Main.upgradeTower()
     this.scene.stop()
+    this.scene.resume('playGame')
+    this.scene.resume('UI')
   }
   createStats() {
     var width = 350,
@@ -153,7 +157,9 @@ class sellMenu extends Phaser.Scene {
     text.y = y;
     text.setInteractive();
     text.on('pointerdown', function (pointer, gameObject) {
-      game.scene.stop('sellMenu');
-    });
+      this.scene.stop('sellMenu');
+      this.scene.resume('playGame')
+      this.scene.resume('UI')
+    }, this);
   }
 }

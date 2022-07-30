@@ -21,7 +21,8 @@ var filesToCache = [
   '/classes/button.js',
   '/classes/settings.js',
   '/classes/towers.js',
-
+  '/classes/enemies.js',
+  '/classes/mapTest.js',
 
   '/assets/sprites/blank.png',
   '/assets/sprites/blocks.png',
@@ -32,6 +33,7 @@ var filesToCache = [
   '/assets/sprites/particle.png',
   '/assets/sprites/rover.png',
   '/assets/sprites/towers.png',
+  '/assets/sprites/enemies.png',
 
   //'https://cdn.jsdelivr.net/gh/photonstorm/phaser@3.10.1/dist/phaser.min.js'
 ];

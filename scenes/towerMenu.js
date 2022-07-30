@@ -51,8 +51,10 @@ class towerMenu extends Phaser.Scene {
     text.y = y;
     text.setInteractive();
     text.on('pointerdown', function (pointer, gameObject) {
-      game.scene.stop('towerMenu');
-    });
+      this.scene.stop('towerMenu');
+      this.scene.resume('playGame')
+      this.scene.resume('UI')
+    }, this);
   }
   createButton(x, y, index) {
     var width = 80,
@@ -113,7 +115,9 @@ class towerMenu extends Phaser.Scene {
       money.amount = money.amount - towers[t.id].cost;
       this.Main.placeTower(t.id);
       this.UI.moneyText.setText(money.amount)
-      game.scene.stop('towerMenu');
+      this.scene.stop('towerMenu');
+      this.scene.resume('playGame')
+      this.scene.resume('UI')
       // this.noMoneyText.alpha = 0;
     } else {
       // this.noMoneyText.alpha = 1;

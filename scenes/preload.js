@@ -69,11 +69,14 @@ class preloadGame extends Phaser.Scene {
     for (var i = 0; i < 125; i++) {
       this.load.image("particle", "assets/sprites/particle.png");
     }
-    this.load.spritesheet("rover", "assets/sprites/rover.png", {
+    this.load.spritesheet("rover_", "assets/sprites/rover.png", {
       frameWidth: 60,
       frameHeight: 60
     });
-
+    this.load.spritesheet("rover", "assets/sprites/enemies.png", {
+      frameWidth: 50,
+      frameHeight: 50
+    });
 
     this.load.image('bullet', 'assets/sprites/bullet.png');
     this.load.spritesheet("towers", "assets/sprites/towers.png", {
