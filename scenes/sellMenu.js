@@ -24,10 +24,10 @@ class sellMenu extends Phaser.Scene {
   }
   createButton(x, y, name) {
 
-    var nameText = this.add.text(this.rectPosition.x + 150, this.rectPosition.y + 25, towerAtLocation.name, { fontSize: '30px', fill: '#fff' }).setOrigin(.5)
+    var nameText = this.add.text(this.rectPosition.x + 150, this.rectPosition.y + 25, towerAtLocation.name + '(' + towerAtLocation.hp + ')', { fontSize: '30px', fill: '#fff' }).setOrigin(.5)
     var towerIcon = this.add.image(this.rectPosition.x + 150, this.rectPosition.y + 70, 'towers', towerAtLocation.frameNum).setScale(.75)
 
-
+    console.log(towerAtLocation.hp)
 
     // tower = towerInfo.info[towerAtLocation.name],
     var upgradeCount = 0
@@ -79,7 +79,7 @@ class sellMenu extends Phaser.Scene {
     money.amount += towerAtLocation.sellAmount;
 
     this.UI.moneyText.setText(money.amount)
-    this.Main.removeTower()
+    this.Main.removeTower(towerAtLocation)
     this.scene.stop()
     this.scene.resume('playGame')
     this.scene.resume('UI')

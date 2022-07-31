@@ -6,6 +6,7 @@ class Turret extends Phaser.GameObjects.Image {
     //this.radius = 1
     this.canFire = false
     this.targetAquired = false
+    this.isHit = false
     this.i = tile.i
     this.j = tile.j
     this.waveAdded = wave
@@ -97,6 +98,22 @@ class Turret extends Phaser.GameObjects.Image {
 
     }
   }
+  receiveDamage() {
+    this.hp -= 1
+    this.scene.time.addEvent({
+      delay: 2000,                // ms
+      callback: function () {
+        this.isHit = false
+      },
+      //args: [],
+      callbackScope: this,
+      loop: false
+    });
+    if (this.hp <= 0) {
+      this.scene.removeTower(this)
+    }
+  }
+
   setType(template, upgrade) {
     //template = typeof template === 'undefined' ? {} : template;
     var keys = Object.keys(template);

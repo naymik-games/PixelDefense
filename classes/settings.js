@@ -8,7 +8,8 @@ var defaultValues = {
   playerData: null,
   map: null,
   levelsComplete: [],
-  levelsPlayed: [0]
+  levelsPlayed: [0],
+  towerData: null
 }
 var defaultValuesEndless = {
   onLevel: 0,

@@ -75,7 +75,7 @@ class playGame extends Phaser.Scene {
 
 
     enemies = this.physics.add.group({ classType: Enemy, runChildUpdate: true });
-    turrets = this.add.group({ runChildUpdate: true });
+    turrets = this.physics.add.group({ runChildUpdate: true });
     bullets = this.physics.add.group({ classType: Bullet, runChildUpdate: true });
     blocks = this.physics.add.group();
     this.level = levels[onLevel]
@@ -202,6 +202,7 @@ class playGame extends Phaser.Scene {
 
     this.physics.add.overlap(enemies, bullets, this.damageEnemy, null, this);
     this.physics.add.overlap(blocks, bullets, this.removeBullet, null, this);
+    this.physics.add.overlap(turrets, enemies, this.damageTurret, null, this);
     /* this.input.on("pointerdown", this.gemSelect, this);
      this.input.on("pointermove", this.drawPath, this);
      this.input.on("pointerup", this.removeGems, this);
@@ -519,11 +520,11 @@ class playGame extends Phaser.Scene {
 
     }
   }
-  removeTower() {
-    this.map[this.selectedTile.i][this.selectedTile.j] = BLANK
-    towerAtLocation.graphics.clear()
-    towerAtLocation.setActive(false);
-    towerAtLocation.setVisible(false);
+  removeTower(tower) {
+    this.map[tower.i][tower.j] = BLANK
+    tower.graphics.clear()
+    tower.setActive(false);
+    tower.setVisible(false);
     towerAtLocation = null
 
   }
@@ -551,6 +552,14 @@ class playGame extends Phaser.Scene {
       // decrease the enemy hp with BULLET_DAMAGE
       enemy.receiveDamage(bullet.power, this, bullet.type);
     }
+  }
+  damageTurret(turret, enemy) {
+    if (!turret.isHit) {
+      turret.receiveDamage()
+      turret.isHit = true
+
+    }
+
   }
   addScore() {
     this.events.emit('score');
@@ -610,11 +619,11 @@ var Bullet = new Phaser.Class({
     this.dy = Math.sin(angle);
 
     this.lifespan = 1000 //* this.speed;
-    console.log(this.x)
+    /* console.log(this.x)
     console.log(this.y)
     console.log(this.towerI)
     console.log(this.towerJ)
-    console.log(this.range)
+    console.log(this.range) */
   },
 
   update: function (time, delta) {
