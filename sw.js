@@ -1,4 +1,4 @@
-var cacheName = 'PixelDefense v0.1';
+var cacheName = 'PixelDefense v0.2';
 var filesToCache = [
   '/',
   '/index.html',
@@ -23,6 +23,7 @@ var filesToCache = [
   '/classes/towers.js',
   '/classes/enemies.js',
   '/classes/mapTest.js',
+  '/classes/levels.js',
 
   '/assets/sprites/blank.png',
   '/assets/sprites/blocks.png',
@@ -34,6 +35,7 @@ var filesToCache = [
   '/assets/sprites/rover.png',
   '/assets/sprites/towers.png',
   '/assets/sprites/enemies.png',
+  '/assets/sprites/menu.png',
 
   //'https://cdn.jsdelivr.net/gh/photonstorm/phaser@3.10.1/dist/phaser.min.js'
 ];

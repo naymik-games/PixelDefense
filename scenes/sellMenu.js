@@ -85,7 +85,7 @@ class sellMenu extends Phaser.Scene {
     this.scene.resume('UI')
   }
   upgradeTower() {
-    money.amount += towerAtLocation.upGradeCost;
+    money.amount -= towerAtLocation.upGradeCost;
 
     this.UI.moneyText.setText(money.amount)
     this.Main.upgradeTower()

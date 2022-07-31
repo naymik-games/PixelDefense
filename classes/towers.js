@@ -149,7 +149,7 @@ let towers = [
     frameNum: 0,
     fireRate: 1000,
     bulletSpeed: 600,
-    name: 'Starter',
+    name: 'Basic',
     cost: 20,
     power: 10,
     hp: 10,
@@ -198,7 +198,7 @@ let towers = [
 
   },
   {
-    radius: 1.5,
+    radius: 2.5,
     frameNum: 3,
     fireRate: 1300,
     name: 'Bomb',
@@ -212,14 +212,14 @@ let towers = [
     upGradePower: 15,
     upGradeBS: 900,
     upGradeCost: 75,
-    upGradeRadius: 2.5
+    upGradeRadius: 4.5
 
   },
   {
     radius: 3.5,
     frameNum: 4,
     fireRate: 200,
-    name: 'Machine Gun',
+    name: 'Rapid',
     type: 'projectile',
     cost: 120,
     power: 20,
@@ -237,7 +237,7 @@ let towers = [
     radius: 2.5,
     frameNum: 5,
     fireRate: 1500,
-    name: 'Stun Gun',
+    name: 'Stun',
     type: 'stun',
     cost: 130,
     power: 20,

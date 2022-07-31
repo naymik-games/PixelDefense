@@ -81,7 +81,7 @@ class startGame extends Phaser.Scene {
             fill: '#fff'
           });
           percent.setOrigin(0.5, 0.5); */
-        console.log(gameData.levelsPlayed)
+
         if (gameData.levelsPlayed.indexOf(levelNum) > -1) {
           text.setInteractive();
           text.setFill('#00ff00');
@@ -130,7 +130,7 @@ class startGame extends Phaser.Scene {
   }
   clickHandler(t) {
     onLevel = t.level
-    console.log(onLevel)
+
 
     load = 'new'
     this.scene.start('playGame');

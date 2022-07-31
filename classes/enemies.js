@@ -71,7 +71,7 @@ var Enemy = new Phaser.Class({
     this.healthbar.setVisible(true);
     this.setAlpha(1)
     finder.findPath(this.spawn.j, this.spawn.i, this.end.j, this.end.i, function (route) {
-      console.log('finding...')
+      // console.log('finding...')
       if (route === null) {
         console.log("Path was not found.");
       } else {
@@ -135,7 +135,7 @@ var Enemy = new Phaser.Class({
       this.healthbar.setVisible(false);
       this.setActive(false);
       this.setVisible(false);
-      console.log(scene.killedInWave)
+      //console.log(scene.killedInWave)
     }
   },
   update: function (time, delta) {

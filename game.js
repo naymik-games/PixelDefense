@@ -89,7 +89,7 @@ class playGame extends Phaser.Scene {
     var graphics = this.add.graphics();
     this.cols = 14
     cellSize = game.config.width / this.cols
-    console.log(cellSize)
+
     offset = cellSize / 2
     this.rows = 22
     // this.rows = Math.floor(game.config.height / cellSize)
@@ -293,9 +293,9 @@ class playGame extends Phaser.Scene {
     enemy.timeline = this.tweens.timeline({
       tweens: enemy.tweens,
       onComplete: function () {
-        console.log('done')
+        //console.log('done')
         this.landed++
-        console.log(this.landed)
+        // console.log(this.landed)
         money.health -= this.level.enemyHitForHealth
         this.UI.healthText.setText(money.health)
         this.runCheck()
@@ -350,7 +350,7 @@ class playGame extends Phaser.Scene {
         //  var j = Phaser.Math.Between(0, this.cols - 1)
         if (this.map[i][j] == BLANK) {
           var block = this.add.image(offset + j * cellSize, offset + i * cellSize, 'block', 2)
-          console.log('spawn')
+
           this.map[i][j] = SPAWN
           this.setSafeZone({ i: i, j: j })
           spawnPoints.push({ i: i, j: j })
@@ -368,7 +368,7 @@ class playGame extends Phaser.Scene {
         var j = Phaser.Math.Between(0, this.cols - 1)
         if (this.map[i][j] == BLANK) {
           var block = this.add.image(offset + j * cellSize, offset + i * cellSize, 'block', 1)
-          console.log('end')
+
           this.map[i][j] = END
           endPoints.push({ i: i, j: j })
           done = true
@@ -385,7 +385,7 @@ class playGame extends Phaser.Scene {
         var j = Phaser.Math.Between(0, this.cols - 1)
         if (this.map[i][j] == BLANK) {
           var block = this.add.image(offset + j * cellSize, offset + i * cellSize, 'block', 0)
-          console.log('block')
+
           this.map[i][j] = BLOCK
           done = true
         }
@@ -481,8 +481,8 @@ class playGame extends Phaser.Scene {
             var towerNum = this.map[y][x] - TOWERBASE
             var upgrade = false
           }
-
-          var image = new Turret(this, offset + x * cellSize, offset + y * cellSize, 'towers', towerNum);
+          var selectedTile = { i: y, j: x }
+          var image = new Turret(this, offset + x * cellSize, offset + y * cellSize, 'towers', towerNum, selectedTile, this.onWave);
           image.setType(towers[towerNum], upgrade)
 
         } else if (this.map[y][x] == SPAWN) {
@@ -562,7 +562,7 @@ var Bullet = new Phaser.Class({
     this.setPosition(x, y);
     this.speed = Phaser.Math.GetSpeed(speed, 1);
     this.type = type
-    console.log(this.speed)
+    //console.log(this.speed)
     this.power = power
     //  we don't need to rotate the bullets as they are round
     //    this.setRotation(angle);

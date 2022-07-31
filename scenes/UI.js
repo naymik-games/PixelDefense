@@ -43,13 +43,74 @@ class UI extends Phaser.Scene {
       //console.log('dots ' + string)
       this.scoreText.setText(this.score)
     }, this);
-
+    this.makeMenu()
 
 
   }
 
   update() {
 
+  }
+  toggleMenu() {
+
+    if (this.menuGroup.y == 0) {
+      var menuTween = this.tweens.add({
+        targets: this.menuGroup,
+        y: -270,
+        duration: 500,
+        ease: 'Bounce'
+      })
+
+    }
+    if (this.menuGroup.y == -270) {
+      var menuTween = this.tweens.add({
+        targets: this.menuGroup,
+        y: 0,
+        duration: 500,
+        ease: 'Bounce'
+      })
+    }
+  }
+  makeMenu() {
+    ////////menu
+    this.menuGroup = this.add.container().setDepth(3);
+    var menuBG = this.add.image(game.config.width - 240, game.config.height - 10, 'blank').setOrigin(.5, 0).setTint(0x000000).setAlpha(.8)
+    menuBG.displayWidth = 300;
+    menuBG.displayHeight = 600
+    this.menuGroup.add(menuBG)
+    var menuButton = this.add.image(game.config.width - 240, game.config.height - 40, "menu").setInteractive().setDepth(3);
+    menuButton.on('pointerdown', this.toggleMenu, this)
+    menuButton.setOrigin(0.5);
+    this.menuGroup.add(menuButton);
+    var homeButton = this.add.bitmapText(game.config.width - 240, game.config.height + 50, 'topaz', 'HOME', 50).setOrigin(.5).setTint(0xffffff).setAlpha(1).setInteractive();
+    homeButton.on('pointerdown', function () {
+      this.scene.stop()
+      this.scene.stop('playGame')
+      this.scene.start('startGame')
+    }, this)
+    this.menuGroup.add(homeButton);
+    var wordButton = this.add.bitmapText(game.config.width - 240, game.config.height + 140, 'topaz', 'PAUSE', 50).setOrigin(.5).setTint(0xffffff).setAlpha(1).setInteractive();
+    wordButton.on('pointerdown', function () {
+      if (this.scene.isPaused('playGame')) {
+        this.scene.resume('playGame')
+      } else {
+        this.scene.pause('playGame')
+      }
+
+
+    }, this)
+    this.menuGroup.add(wordButton);
+    var helpButton = this.add.bitmapText(game.config.width - 240, game.config.height + 230, 'topaz', 'HELP', 50).setOrigin(.5).setTint(0xffffff).setAlpha(1).setInteractive();
+    helpButton.on('pointerdown', function () {
+
+      this.scene.pause()
+      this.scene.launch('help')
+    }, this)
+    this.menuGroup.add(helpButton);
+    //var thankYou = game.add.button(game.config.width / 2, game.config.height + 130, "thankyou", function(){});
+    // thankYou.setOrigin(0.5);
+    // menuGroup.add(thankYou);    
+    ////////end menu
   }
 
 
