@@ -516,9 +516,11 @@ class playGame extends Phaser.Scene {
     // only if both enemy and bullet are alive
     if (enemy.active === true && bullet.active === true) {
       // we remove the bullet right away
+      if (bullet.type != 'laser') {
+        bullet.setActive(false);
+        bullet.setVisible(false);
+      }
 
-      bullet.setActive(false);
-      bullet.setVisible(false);
 
       // decrease the enemy hp with BULLET_DAMAGE
       enemy.receiveDamage(bullet.power, this, bullet.type);
@@ -551,17 +553,28 @@ var Bullet = new Phaser.Class({
       this.power = 0
       this.speed = Phaser.Math.GetSpeed(0, 1);
       this.type = 'projectile'
+      this.scene = scene
     },
 
-  fire: function (x, y, angle, power, speed, type) {
+  fire: function (x, y, angle, power, speed, type, towerI, towerJ, range) {
     this.setActive(true);
     this.setVisible(true);
+    this.type = type
+    if (this.type == 'laser') {
+      var thisRange = range * 2
+    } else {
+      var thisRange = range
+    }
+
+    this.range = thisRange
+    this.towerI = towerI
+    this.towerJ = towerJ
 
     //addBullet(this.x, this.y, angle, this.power, this.bulletSpeed, this.type);
     //  Bullets fire from the middle of the screen to the given x/y
     this.setPosition(x, y);
     this.speed = Phaser.Math.GetSpeed(speed, 1);
-    this.type = type
+
     //console.log(this.speed)
     this.power = power
     //  we don't need to rotate the bullets as they are round
@@ -571,26 +584,34 @@ var Bullet = new Phaser.Class({
     this.dy = Math.sin(angle);
 
     this.lifespan = 1000 //* this.speed;
-
+    console.log(this.x)
+    console.log(this.y)
+    console.log(this.towerI)
+    console.log(this.towerJ)
+    console.log(this.range)
   },
 
   update: function (time, delta) {
-    this.lifespan -= delta;
+    this.lifespan -= this.speed * delta;
 
     this.x += this.dx * (this.speed * delta);
     this.y += this.dy * (this.speed * delta);
 
-    if (this.lifespan <= 0) {
+    /*  if (this.lifespan < 0) {
+       this.setActive(false);
+       this.setVisible(false);
+     } */
+    if (Phaser.Math.Distance.Between(this.x, this.y, offset + this.towerJ * cellSize, offset + this.towerI * cellSize) > this.range) {
       this.setActive(false);
       this.setVisible(false);
     }
   }
 
 });
-function addBullet(x, y, angle, power, speed, type) {
+function addBullet(x, y, angle, power, speed, type, towerI, towerJ, range) {
   var bullet = bullets.get();
   if (bullet) {
     // console.log(type)
-    bullet.fire(x, y, angle, power, speed, type);
+    bullet.fire(x, y, angle, power, speed, type, towerI, towerJ, range);
   }
 }

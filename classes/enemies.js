@@ -54,7 +54,7 @@ var Enemy = new Phaser.Class({
     if (this.name == 'Boss') {
       var extra = wave * 100
     } else {
-      var extra = 0
+      var extra = wave * 5
     }
     this.hp = template.hp + extra
     this.reward = template.reward

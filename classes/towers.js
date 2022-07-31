@@ -10,7 +10,7 @@ class Turret extends Phaser.GameObjects.Image {
     this.j = tile.j
     this.waveAdded = wave
     this.upgraded = false
-    this.graphics = scene.add.graphics({ lineStyle: { width: 1, color: 0xffffff, alpha: .5 }, fillStyle: { color: 0xffffff, alpha: 1 } });
+    this.graphics = scene.add.graphics({ lineStyle: { width: 1, color: 0x08A349, alpha: .5 }, fillStyle: { color: 0xffffff, alpha: 1 } });
     this.scene = scene
     // this.graphics.strokeCircleShape(this.circle)
     scene.add.existing(this);
@@ -61,7 +61,7 @@ class Turret extends Phaser.GameObjects.Image {
   fire() {
     var range, enemy, enemies, angle;
 
-    if (this.type == 'projectile' || this.type == 'stun') {
+    if (this.type == 'projectile' || this.type == 'stun' || this.type == 'laser') {
       enemy = this.checkEnemy(this.x, this.y, this.range, 'blank');
       if (enemy) {
 
@@ -72,7 +72,7 @@ class Turret extends Phaser.GameObjects.Image {
         // }
 
         angle = Phaser.Math.Angle.Between(this.x, this.y, enemy.x, enemy.y);
-        addBullet(this.x, this.y, angle, this.power, this.bulletSpeed, this.type);
+        addBullet(this.x, this.y, angle, this.power, this.bulletSpeed, this.type, this.i, this.j, this.range);
 
         this.angle = (angle + Math.PI / 2) * Phaser.Math.RAD_TO_DEG;
       }
@@ -114,9 +114,11 @@ class Turret extends Phaser.GameObjects.Image {
       var frameNum = this.frameNum
     }
     this.setFrame(frameNum)
-
-    // this.graphics.clear()
-    //  this.graphics.strokeCircleShape(this.circle)
+    if (template.name == 'Bomb') {
+      this.graphics.clear()
+      this.graphics.strokeCircleShape(this.circle)
+    }
+    // 
     // if (template.cost) this.totalCost += template.cost;
   }
   upgradeTower() {
@@ -153,12 +155,12 @@ let towers = [
     cost: 20,
     power: 10,
     hp: 10,
-    sellAmount: 5,
+    sellAmount: 10,
     type: 'projectile',
     upGradeFR: 800,
     upGradePower: 15,
     upGradeBS: 900,
-    upGradeCost: 10,
+    upGradeCost: 15,
     upGradeRadius: 2.5
   },
   {
@@ -184,16 +186,16 @@ let towers = [
     frameNum: 2,
     fireRate: 800,
     name: 'Laser',
-    type: 'projectile',
-    cost: 60,
-    power: 30,
+    type: 'laser',
+    cost: 100,
+    power: 20,
     hp: 30,
-    sellAmount: 25,
+    sellAmount: 50,
     bulletSpeed: 1500,
     upGradeFR: 700,
-    upGradePower: 40,
+    upGradePower: 30,
     upGradeBS: 900,
-    upGradeCost: 20,
+    upGradeCost: 75,
     upGradeRadius: 5.5
 
   },
@@ -204,14 +206,14 @@ let towers = [
     name: 'Bomb',
     type: 'bomb',
     cost: 150,
-    power: 5,
+    power: 25,
     hp: 40,
-    sellAmount: 25,
+    sellAmount: 75,
     bulletSpeed: 1500,
     upGradeFR: 700,
-    upGradePower: 15,
+    upGradePower: 40,
     upGradeBS: 900,
-    upGradeCost: 75,
+    upGradeCost: 110,
     upGradeRadius: 4.5
 
   },
@@ -224,12 +226,12 @@ let towers = [
     cost: 120,
     power: 20,
     hp: 50,
-    sellAmount: 25,
+    sellAmount: 60,
     bulletSpeed: 1800,
     upGradeFR: 100,
     upGradePower: 30,
     upGradeBS: 900,
-    upGradeCost: 80,
+    upGradeCost: 90,
     upGradeRadius: 4.5
 
   },
@@ -242,12 +244,12 @@ let towers = [
     cost: 130,
     power: 20,
     hp: 60,
-    sellAmount: 25,
+    sellAmount: 65,
     bulletSpeed: 800,
     upGradeFR: 100,
     upGradePower: 30,
     upGradeBS: 900,
-    upGradeCost: 80,
+    upGradeCost: 90,
     upGradeRadius: 4.5
 
   },
@@ -260,12 +262,12 @@ let towers = [
     cost: 150,
     power: 30,
     hp: 70,
-    sellAmount: 25,
+    sellAmount: 75,
     bulletSpeed: 800,
     upGradeFR: 800,
     upGradePower: 50,
     upGradeBS: 1100,
-    upGradeCost: 100,
+    upGradeCost: 110,
     upGradeRadius: 6.5
 
   }

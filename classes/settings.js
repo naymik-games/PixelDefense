@@ -10,6 +10,14 @@ var defaultValues = {
   levelsComplete: [],
   levelsPlayed: [0]
 }
+var defaultValuesEndless = {
+  onLevel: 0,
+  onWave: 0,
+  savedLevel: null,
+  playerData: null,
+  map: null,
+
+}
 let load = 'new'
 
 
