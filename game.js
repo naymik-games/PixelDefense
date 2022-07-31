@@ -7,6 +7,7 @@ let enemies;
 let bullets;
 let towerAtLocation;
 var turrets;
+let blocks
 var currentGame
 
 var d = new Date();
@@ -76,6 +77,7 @@ class playGame extends Phaser.Scene {
     enemies = this.physics.add.group({ classType: Enemy, runChildUpdate: true });
     turrets = this.add.group({ runChildUpdate: true });
     bullets = this.physics.add.group({ classType: Bullet, runChildUpdate: true });
+    blocks = this.physics.add.group();
     this.level = levels[onLevel]
 
 
@@ -109,6 +111,7 @@ class playGame extends Phaser.Scene {
           for (let x = 0; x < this.map[0].length; x++) {
             if (this.map[y][x] == 1) {
               var block = this.add.image(offset + x * cellSize, offset + y * cellSize, 'block', 0)
+              blocks.add(block)
             }
           }
 
@@ -135,6 +138,7 @@ class playGame extends Phaser.Scene {
             for (let x = 0; x < this.map[0].length; x++) {
               if (this.map[y][x] == 1) {
                 var block = this.add.image(offset + x * cellSize, offset + y * cellSize, 'block', 0)
+                blocks.add(block)
               }
             }
 
@@ -197,6 +201,7 @@ class playGame extends Phaser.Scene {
 
 
     this.physics.add.overlap(enemies, bullets, this.damageEnemy, null, this);
+    this.physics.add.overlap(blocks, bullets, this.removeBullet, null, this);
     /* this.input.on("pointerdown", this.gemSelect, this);
      this.input.on("pointermove", this.drawPath, this);
      this.input.on("pointerup", this.removeGems, this);
@@ -275,7 +280,23 @@ class playGame extends Phaser.Scene {
     gameData.onWave = this.onWave
     gameData.playerData = money
     gameData.map = this.map
+    gameData.towerData = this.getTowerData()
     localStorage.setItem('DefenseSave', JSON.stringify(gameData));
+  }
+  getTowerData() {
+    var results = []
+    var towersUnits = turrets.getChildren()
+
+    for (var i = 0; i < towersUnits.length; i++) {
+      var tower = towersUnits[i];
+      var data = {}
+      data.i = tower.i
+      data.j = tower.j
+      data.waveAdded = tower.waveAdded
+      data.hp = tower.hp
+      results.push(data)
+    }
+    return results
   }
   movePlayer(route, enemy, speed) {
     enemy.tweens = [];
@@ -385,7 +406,7 @@ class playGame extends Phaser.Scene {
         var j = Phaser.Math.Between(0, this.cols - 1)
         if (this.map[i][j] == BLANK) {
           var block = this.add.image(offset + j * cellSize, offset + i * cellSize, 'block', 0)
-
+          blocks.add(block)
           this.map[i][j] = BLOCK
           done = true
         }
@@ -511,7 +532,12 @@ class playGame extends Phaser.Scene {
     towerAtLocation.upgradeTower()
     towerAtLocation = null
   }
-
+  removeBullet(block, bullet) {
+    if (bullet.type != 'missle') {
+      bullet.setActive(false);
+      bullet.setVisible(false);
+    }
+  }
   damageEnemy(enemy, bullet) {
     // only if both enemy and bullet are alive
     if (enemy.active === true && bullet.active === true) {
