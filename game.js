@@ -8,8 +8,7 @@ let bullets;
 let towerAtLocation;
 var turrets;
 var currentGame
-var ENEMY_SPEED = 1 / 2500;
-var BULLET_DAMAGE = 50;
+
 var d = new Date();
 let neighborDirections = [[0, 1], [1, 1], [1, 0], [1, -1], [0, -1], [-1, -1], [-1, 0], [-1, 1]]
 //grid types
@@ -21,9 +20,9 @@ const NOTOWER = 4
 const TOWERBASE = 5
 const TOWERUPBASE = 11
 
-let spawnPoints = []
-let endPoints = []
-let spawnAlt = 0
+let spawnPoints
+let endPoints
+let spawnAlt
 
 window.onload = function () {
   let gameConfig = {
@@ -58,6 +57,14 @@ class playGame extends Phaser.Scene {
 
   }
   create() {
+    //resets
+    spawnPoints = []
+    endPoints = []
+    spawnAlt = 0
+
+
+
+
     if (load == 'new') {
       this.onWave = 0
     } else {
@@ -89,7 +96,7 @@ class playGame extends Phaser.Scene {
     // this.cols = Math.floor(game.config.width / cellSize)
 
 
-    this.drawLines(graphics, this.rows, this.cols);
+    //this.drawLines(graphics, this.rows, this.cols);
 
     if (load == 'new') {
       money.amount = this.level.startAmount
@@ -108,7 +115,7 @@ class playGame extends Phaser.Scene {
         }
       } else {
         //else choose random map. One is just blocks, other is rooms
-        var mapType = Phaser.Math.Between(4, 5)
+        var mapType = Phaser.Math.Between(0, 5)
         if (mapType < 4) {
           this.map = []
           for (let y = 0; y < this.rows; y++) {
@@ -339,8 +346,8 @@ class playGame extends Phaser.Scene {
           var i = Phaser.Math.Between(0, Math.floor(this.rows / 4))
           var j = Phaser.Math.Between(Math.floor(this.cols / 2), this.cols - 1)
         }
-        var i = Phaser.Math.Between(0, Math.floor(this.rows / 4))
-        var j = Phaser.Math.Between(0, this.cols - 1)
+        // var i = Phaser.Math.Between(0, Math.floor(this.rows / 4))
+        //  var j = Phaser.Math.Between(0, this.cols - 1)
         if (this.map[i][j] == BLANK) {
           var block = this.add.image(offset + j * cellSize, offset + i * cellSize, 'block', 2)
           console.log('spawn')
@@ -504,14 +511,7 @@ class playGame extends Phaser.Scene {
     towerAtLocation.upgradeTower()
     towerAtLocation = null
   }
-  addBullet(x, y, angle, type) {
-    console.log('type' + type)
-    var bullet = bullets.get();
-    if (bullet) {
-      console.log(type)
-      bullet.fire(x, y, angle, type);
-    }
-  }
+
   damageEnemy(enemy, bullet) {
     // only if both enemy and bullet are alive
     if (enemy.active === true && bullet.active === true) {
@@ -543,7 +543,8 @@ var Bullet = new Phaser.Class({
 
     function Bullet(scene) {
       Phaser.GameObjects.Image.call(this, scene, 0, 0, 'bullet');
-
+      this.setDepth(2)
+      // 
       this.incX = 0;
       this.incY = 0;
       this.lifespan = 0;
@@ -555,6 +556,7 @@ var Bullet = new Phaser.Class({
   fire: function (x, y, angle, power, speed, type) {
     this.setActive(true);
     this.setVisible(true);
+
     //addBullet(this.x, this.y, angle, this.power, this.bulletSpeed, this.type);
     //  Bullets fire from the middle of the screen to the given x/y
     this.setPosition(x, y);
@@ -588,7 +590,7 @@ var Bullet = new Phaser.Class({
 function addBullet(x, y, angle, power, speed, type) {
   var bullet = bullets.get();
   if (bullet) {
-    console.log(type)
+    // console.log(type)
     bullet.fire(x, y, angle, power, speed, type);
   }
 }

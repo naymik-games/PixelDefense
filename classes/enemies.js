@@ -7,7 +7,7 @@ var Enemy = new Phaser.Class({
     function Enemy(scene) {
 
       Phaser.GameObjects.Image.call(this, scene, offset + spawnPoints[spawnAlt].j * cellSize, offset + spawnPoints[spawnAlt].i * cellSize, 'rover', 0);
-      this.setScale(.8)
+      // this.setScale(.8)
       this.spawn = spawnPoints[spawnAlt]
       if (spawnPoints.length > 1) {
         if (spawnAlt == 0) {
@@ -27,7 +27,7 @@ var Enemy = new Phaser.Class({
       this.frame = 0
       this.health = 0
       this.stunned = false
-      this.healthbar = scene.add.text(0, 0, "22", { fontSize: '25px', fill: '#fff' });
+      this.healthbar = scene.add.text(0, 0, "22", { fontSize: '30px', fill: '#fff', fontStyle: 'bold' });
       this.healthbar.setOrigin(0, 0);
       /* this.emitter = scene.add.particles('particle').createEmitter({
 
@@ -99,6 +99,12 @@ var Enemy = new Phaser.Class({
       //  console.log(timestamp)
     } else {
       this.health -= damage;
+      scene.tweens.add({
+        targets: this,
+        alpha: 0,
+        yoyo: true,
+        duration: 75
+      })
     }
 
     //this.setAlpha(.5)
@@ -135,7 +141,7 @@ var Enemy = new Phaser.Class({
   update: function (time, delta) {
     this.healthbar.setText(this.health)
     this.healthbar.x = this.x - this.healthbar.width / 2;
-    this.healthbar.y = this.y - this.height;
+    this.healthbar.y = this.y - (this.height + 5);
 
   }
 
@@ -171,42 +177,42 @@ let enemyTypes = [
     hp: 75,
     reward: 3,
     speed: 500,
-    frame: 3
+    frame: 2
   },
   {
     name: 'Strong and Fast',
     hp: 135,
     reward: 4,
-    speed: 400,
-    frame: 4
+    speed: 700,
+    frame: 3
   },
   {
     name: 'Speedy 2',
     hp: 300,
     reward: 4,
     speed: 400,
-    frame: 3
+    frame: 4
   },
   {
     name: 'Stronger 2',
     hp: 375,
     reward: 4,
     speed: 1000,
-    frame: 3
+    frame: 5
   },
   {
     name: 'Tank',
     hp: 650,
     reward: 5,
     speed: 1200,
-    frame: 3
+    frame: 6
   },
   {
     name: 'Boss',
     hp: 250,
     reward: 10,
     speed: 1500,
-    frame: 10
+    frame: 7
   }
 ]
 

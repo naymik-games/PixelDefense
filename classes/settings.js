@@ -15,6 +15,7 @@ let load = 'new'
 
 onLevel = 0
 let levels = [{
+  //level 0
   startAmount: 200,
   startHealth: 10,
   numberOfWaves: 3,
@@ -27,7 +28,7 @@ let levels = [{
     num: 0,
     spawnRate: 1500,
     addBlocks: 0,
-    waveEnemies: [0, 0, 0, 0, 2, 2, 2, 2, 3] // 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0
+    waveEnemies: [0, 1, 2, 3, 4, 5, 6, 7] // 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0
   },
   {
     num: 1,
@@ -44,6 +45,7 @@ let levels = [{
   ]
 },
 {
+  //level 1
   startAmount: 50,
   startHealth: 10,
   numberOfWaves: 3,

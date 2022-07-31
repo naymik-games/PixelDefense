@@ -115,8 +115,8 @@ class Turret extends Phaser.GameObjects.Image {
     }
     this.setFrame(frameNum)
 
-    this.graphics.clear()
-    this.graphics.strokeCircleShape(this.circle)
+    // this.graphics.clear()
+    //  this.graphics.strokeCircleShape(this.circle)
     // if (template.cost) this.totalCost += template.cost;
   }
   upgradeTower() {
@@ -145,7 +145,7 @@ class Turret extends Phaser.GameObjects.Image {
 
 let towers = [
   {
-    radius: 1,
+    radius: 1.5,
     frameNum: 0,
     fireRate: 1000,
     bulletSpeed: 600,
@@ -159,10 +159,10 @@ let towers = [
     upGradePower: 15,
     upGradeBS: 900,
     upGradeCost: 10,
-    upGradeRadius: 2
+    upGradeRadius: 2.5
   },
   {
-    radius: 2,
+    radius: 2.5,
     frameNum: 1,
     fireRate: 800,
     name: 'Canon',
@@ -176,11 +176,11 @@ let towers = [
     upGradePower: 15,
     upGradeBS: 1000,
     upGradeCost: 20,
-    upGradeRadius: 3
+    upGradeRadius: 3.5
 
   },
   {
-    radius: 2.5,
+    radius: 3.5,
     frameNum: 2,
     fireRate: 800,
     name: 'Laser',
@@ -194,11 +194,11 @@ let towers = [
     upGradePower: 40,
     upGradeBS: 900,
     upGradeCost: 20,
-    upGradeRadius: 3
+    upGradeRadius: 5.5
 
   },
   {
-    radius: 1,
+    radius: 1.5,
     frameNum: 3,
     fireRate: 1300,
     name: 'Bomb',
@@ -212,11 +212,11 @@ let towers = [
     upGradePower: 15,
     upGradeBS: 900,
     upGradeCost: 75,
-    upGradeRadius: 2
+    upGradeRadius: 2.5
 
   },
   {
-    radius: 3,
+    radius: 3.5,
     frameNum: 4,
     fireRate: 200,
     name: 'Machine Gun',
@@ -230,7 +230,7 @@ let towers = [
     upGradePower: 30,
     upGradeBS: 900,
     upGradeCost: 80,
-    upGradeRadius: 4
+    upGradeRadius: 4.5
 
   },
   {
@@ -248,11 +248,11 @@ let towers = [
     upGradePower: 30,
     upGradeBS: 900,
     upGradeCost: 80,
-    upGradeRadius: 4
+    upGradeRadius: 4.5
 
   },
   {
-    radius: 2.5,
+    radius: 4.5,
     frameNum: 6,
     fireRate: 1000,
     name: 'Missle',
@@ -266,7 +266,7 @@ let towers = [
     upGradePower: 50,
     upGradeBS: 1100,
     upGradeCost: 100,
-    upGradeRadius: 4
+    upGradeRadius: 6.5
 
   }
 ]

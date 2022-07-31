@@ -28,11 +28,11 @@ class UI extends Phaser.Scene {
     this.score = 0;
     var wave = this.Main.onWave + 1
     this.waveText = this.add.bitmapText(850, game.config.height - 110, 'topaz', wave, 80).setOrigin(.5).setTint(0xcbf7ff).setAlpha(1);
-    var healthLabel = this.add.text(85, 1500, "HEALTH", { fontSize: '30px', fill: '#fff' }).setOrigin(.5);
+    var healthLabel = this.add.text(85, 1500, "HEALTH", { fontSize: '30px', fill: '#fff', fontStyle: 'bold' }).setOrigin(.5);
     this.healthText = this.add.bitmapText(85, 1550, 'topaz', money.health, 80).setOrigin(.5).setTint(0xcbf7ff).setAlpha(1);
-    var moneyLabel = this.add.text(285, 1500, "MONEY", { fontSize: '30px', fill: '#fff' }).setOrigin(.5);
+    var moneyLabel = this.add.text(285, 1500, "MONEY", { fontSize: '30px', fill: '#fff', fontStyle: 'bold' }).setOrigin(.5);
     this.moneyText = this.add.bitmapText(285, 1550, 'topaz', money.amount, 80).setOrigin(.5).setTint(0xcbf7ff).setAlpha(1);
-    var levelLabel = this.add.text(485, 1500, "LEVEL", { fontSize: '30px', fill: '#fff' }).setOrigin(.5);
+    var levelLabel = this.add.text(485, 1500, "LEVEL", { fontSize: '30px', fill: '#fff', fontStyle: 'bold' }).setOrigin(.5);
     this.levelText = this.add.bitmapText(485, 1550, 'topaz', '1', 80).setOrigin(.5).setTint(0xcbf7ff).setAlpha(1);
 
 
