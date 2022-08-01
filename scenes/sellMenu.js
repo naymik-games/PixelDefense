@@ -19,13 +19,14 @@ class sellMenu extends Phaser.Scene {
     // that.createButton(0, 100, 'Upgrade');
     that.createButton(0, 100, 'Sell');
     that.createButton(0, 100, 'Upgrade');
+    that.createButton(0, 100, 'Fix')
     that.createStats()
 
   }
   createButton(x, y, name) {
 
-    var nameText = this.add.text(this.rectPosition.x + 150, this.rectPosition.y + 25, towerAtLocation.name + '(' + towerAtLocation.hp + ')', { fontSize: '30px', fill: '#fff' }).setOrigin(.5)
-    var towerIcon = this.add.image(this.rectPosition.x + 150, this.rectPosition.y + 70, 'towers', towerAtLocation.frameNum).setScale(.75)
+    var nameText = this.add.text(this.rectPosition.x + this.rectPosition.width / 2, this.rectPosition.y + 25, towerAtLocation.name + '(' + towerAtLocation.hp + ')', { fontSize: '30px', fill: '#fff' }).setOrigin(.5)
+    var towerIcon = this.add.image(this.rectPosition.x + this.rectPosition.width / 2, this.rectPosition.y + 70, 'towers', towerAtLocation.frameNum).setScale(.75)
 
     console.log(towerAtLocation.hp)
 
@@ -42,7 +43,7 @@ class sellMenu extends Phaser.Scene {
 */
 
     if (name === 'Upgrade') {
-      var text2 = this.add.text(this.rectPosition.x + this.rectPosition.width - 30, this.rectPosition.y + 100, name, { fontSize: '30px', fill: '#fff' }).setOrigin(1, 0)
+      var text2 = this.add.text(this.rectPosition.x + this.rectPosition.width - 30, this.rectPosition.y + 100, name, { fontSize: '35px', fill: '#fff' }).setOrigin(1, 0)
       text2.setInteractive();
       var upText;
       sellAmount = towerAtLocation.sellAmount
@@ -50,8 +51,17 @@ class sellMenu extends Phaser.Scene {
 
       upText = this.add.text(text2.x, text2.y + 35, "$" + sellAmount, { fontSize: '30px', fill: '#fff' }).setOrigin(1, 0);
       text2.on('pointerup', this.upgradeTower.bind(this, text2));
+    } else if (name === 'Fix') {
+      var text3 = this.add.text(this.rectPosition.x + this.rectPosition.width / 2, this.rectPosition.y + 100, name, { fontSize: '35px', fill: '#fff' }).setOrigin(1, 0)
+      text3.setInteractive();
+      var fixText;
+      var fixAmount = towerAtLocation.fixAmount
+      text3.text = "Fix";
+
+      fixText = this.add.text(text3.x, text3.y + 35, "$" + fixAmount, { fontSize: '30px', fill: '#fff' }).setOrigin(1, 0);
+      // text3.on('pointerup', this.upgradeTower.bind(this, text3));
     } else {
-      var text = this.add.text(this.rectPosition.x + 30, this.rectPosition.y + 100, name, { fontSize: '30px', fill: '#fff' })
+      var text = this.add.text(this.rectPosition.x + 30, this.rectPosition.y + 100, name, { fontSize: '35px', fill: '#fff' })
 
       text.setInteractive();
       var sellText;
@@ -94,15 +104,15 @@ class sellMenu extends Phaser.Scene {
     this.scene.resume('UI')
   }
   createStats() {
-    var width = 350,
-      height = 150,
+    var width = 550,
+      height = 175,
       x = game.config.width / 2 - width / 2,
       y = 325,
       graphics,
       padding = 10,
       textX,
       textY,
-      vspacing = 25;
+      vspacing = 35;
 
     graphics = this.add.graphics({ fillStyle: { color: 0x000000 } });
     graphics.lineStyle(5, 0xffffff, 1);
@@ -124,11 +134,11 @@ class sellMenu extends Phaser.Scene {
     upGradeRadius: 2 */
   }
   createStatText(x, y, text) {
-    var t = this.add.text(x, y, text, { fontSize: '25px', fill: '#fff' });
+    var t = this.add.text(x, y, text, { fontSize: '35px', fill: '#fff' });
     //t.x = t.x - t.width / 2;
   }
   createHolder() {
-    var width = 350,
+    var width = 550,
       height = 200,
       x = game.config.width / 2 - width / 2,
       y = 100,

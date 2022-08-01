@@ -80,8 +80,8 @@ class preloadGame extends Phaser.Scene {
 
     this.load.image('bullet', 'assets/sprites/bullet.png');
     this.load.spritesheet("towers", "assets/sprites/towers.png", {
-      frameWidth: 60,
-      frameHeight: 60
+      frameWidth: 50,
+      frameHeight: 50
     });
 
     this.load.bitmapFont('topaz', 'assets/fonts/topaz.png', 'assets/fonts/topaz.xml');

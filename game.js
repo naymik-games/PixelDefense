@@ -69,7 +69,12 @@ class playGame extends Phaser.Scene {
     if (load == 'new') {
       this.onWave = 0
     } else {
-      this.onWave = gameData.onWave
+      if (gameMode == 'levels') {
+        this.onWave = gameData.onWave
+      } else {
+        this.onWave = gameDataEndless.onWave
+      }
+
     }
 
 
@@ -78,7 +83,32 @@ class playGame extends Phaser.Scene {
     turrets = this.physics.add.group({ runChildUpdate: true });
     bullets = this.physics.add.group({ classType: Bullet, runChildUpdate: true });
     blocks = this.physics.add.group();
-    this.level = levels[onLevel]
+
+    if (gameMode == 'levels') {
+      this.level = levels[onLevel]
+    } else {
+      if (load == 'new') {
+
+        this.level = endlessLevel
+
+        var enemyList = this.createWave()
+
+        var delays = [800, 900, 1000, 1100, 1200, 1300, 1400, 1500]
+        var spawnDelay = delays[Phaser.Math.Between(0, delays.length - 1)]
+
+        this.level.waves.push({
+          spawnRate: spawnDelay,
+          addBlocks: 0,
+          waveEnemies: enemyList
+        })
+      } else {
+        this.level = gameDataEndless.savedLevel
+      }
+
+
+
+    }
+
 
 
     this.killedInWave = 0
@@ -128,6 +158,7 @@ class playGame extends Phaser.Scene {
             }
             this.map.push(temp)
           }
+
           this.placeRandomBlocks(this.level.numberOfBlocks)
         } else {
           var map = new Rooms(22, 14, 3, 5, 13)
@@ -152,9 +183,16 @@ class playGame extends Phaser.Scene {
       this.placeSpawnPoint(this.level.numberOfSpawnPoints)
       this.placeEndPoint(1)
     } else {
-      money = gameData.playerData
-      this.map = gameData.map
-      this.loadMap()
+      if (gameMode == 'levels') {
+        money = gameData.playerData
+        this.map = gameData.map
+        this.loadMap()
+      } else {
+        money = gameDataEndless.playerData
+        this.map = gameDataEndless.map
+        this.loadMap()
+      }
+
       // this.loadTowers()
     }
 
@@ -208,16 +246,19 @@ class playGame extends Phaser.Scene {
      this.input.on("pointerup", this.removeGems, this);
     */
     //this.check = this.add.image(725, 1000, 'check').setScale(.7);
+
   }
   startWave() {
+    // console.log(Date.now())
+
 
     var timer = this.time.addEvent({
       delay: this.level.waves[this.onWave].spawnRate,                // ms
       callback: function () {
         var enemy = enemies.get();
         if (enemy) {
-
           enemy.setType(enemyTypes[this.level.waves[this.onWave].waveEnemies[this.launchNum]], this.onWave)
+
           enemy.setActive(true);
           enemy.setVisible(true);
           enemy.startOnPath(this);
@@ -265,6 +306,19 @@ class playGame extends Phaser.Scene {
     }
   }
   endWave() {
+    if (gameMode == 'endless') {
+      var enemyList = this.createWave()
+
+      var delays = [800, 900, 1000, 1100, 1200, 1300, 1400, 1500]
+      var spawnDelay = delays[Phaser.Math.Between(0, delays.length - 1)]
+
+      this.level.waves.push({
+        spawnRate: spawnDelay,
+        addBlocks: 0,
+        waveEnemies: enemyList
+      })
+      this.saveProgress()
+    }
 
     this.UI.startWave.setInteractive()
     this.UI.startWave.setAlpha(1)
@@ -276,13 +330,82 @@ class playGame extends Phaser.Scene {
 
 
   }
+  createWave() {
+    var wave = []
+    //first wave
+    if (this.onWave < 3) {
+      var w1 = this.createEnemySegment(0, 10)
+      wave.push(...w1)
+      var w2 = this.createEnemySegment(1, 10)
+      wave.push(...w2)
+      var w3 = this.createEnemySegment(0, 10)
+      wave.push(...w3)
+    } else if (this.onWave < 6) {
+      var w1 = this.createEnemySegment(1, 10)
+      wave.push(...w1)
+      var w2 = this.createEnemySegment(0, 10)
+      wave.push(...w2)
+      var w3 = this.createEnemySegment(1, 10)
+      wave.push(...w3)
+    } else if (this.onWave < 9) {
+      var w1 = this.createEnemySegment(1, 10)
+      wave.push(...w1)
+      var w2 = this.createEnemySegment(2, 10)
+      wave.push(...w2)
+      var w4 = this.createEnemySegment(0, 10)
+      wave.push(...w4)
+      var w3 = this.createEnemySegment(1, 10)
+      wave.push(...w3)
+    } else {
+      var w1 = this.createEnemySegment(2, 10)
+      wave.push(...w1)
+      var w4 = this.createEnemySegment(0, 10)
+      wave.push(...w4)
+      var w2 = this.createEnemySegment(3, 10)
+      wave.push(...w2)
+      var w3 = this.createEnemySegment(1, 10)
+      wave.push(...w3)
+    }
+    /*   if (this.onWave % 3 == 0) {
+  
+      } */
+    if (this.onWave >= 3 && this.onWave < 6) {
+      var w3 = this.createEnemySegment(2, 5 + this.onWave * 10)
+    }
+    if (this.onWave >= 6 && this.onWave < 9) {
+      var w1 = this.createEnemySegment(2, 5 + this.onWave * 10)
+      wave.push(...w1)
+      var w3 = this.createEnemySegment(3, 5 + this.onWave * 10)
+      wave.push(...w3)
+    }
+    wave.push(7)
+    return wave
+  }
+  createEnemySegment(enemy, n) {
+    var y;
+    y = Array(n);
+    while (n--) {
+      y[n] = enemy;
+    }
+    return y;
+  }
   saveProgress() {
-    gameData.onLevel = onLevel
-    gameData.onWave = this.onWave
-    gameData.playerData = money
-    gameData.map = this.map
-    gameData.towerData = this.getTowerData()
-    localStorage.setItem('DefenseSave', JSON.stringify(gameData));
+    if (gameMode == 'levels') {
+      gameData.onLevel = onLevel
+      gameData.onWave = this.onWave
+      gameData.playerData = money
+      gameData.map = this.map
+      gameData.towerData = this.getTowerData()
+      localStorage.setItem('DefenseSave', JSON.stringify(gameData));
+    } else {
+      gameDataEndless.savedLevel = this.level
+      gameDataEndless.onWave = this.onWave
+      gameDataEndless.playerData = money
+      gameDataEndless.map = this.map
+      gameDataEndless.towerData = this.getTowerData()
+      localStorage.setItem('DefenseSaveEndless', JSON.stringify(gameDataEndless));
+    }
+
   }
   getTowerData() {
     var results = []
@@ -506,7 +629,13 @@ class playGame extends Phaser.Scene {
           var selectedTile = { i: y, j: x }
           var image = new Turret(this, offset + x * cellSize, offset + y * cellSize, 'towers', towerNum, selectedTile, this.onWave);
           image.setType(towers[towerNum], upgrade)
-
+          for (let t = 0; t < gameData.towerData.length; t++) {
+            const tower = gameData.towerData[t];
+            if (tower.i == y && tower.j == x) {
+              image.hp = tower.hp
+              image.waveAdded = tower.waveAdded
+            }
+          }
         } else if (this.map[y][x] == SPAWN) {
           var block = this.add.image(offset + x * cellSize, offset + y * cellSize, 'block', 2)
           spawnPoints.push({ i: y, j: x })

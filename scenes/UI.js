@@ -33,7 +33,7 @@ class UI extends Phaser.Scene {
     var moneyLabel = this.add.text(285, 1500, "MONEY", { fontSize: '30px', fill: '#fff', fontStyle: 'bold' }).setOrigin(.5);
     this.moneyText = this.add.bitmapText(285, 1550, 'topaz', money.amount, 80).setOrigin(.5).setTint(0xcbf7ff).setAlpha(1);
     var levelLabel = this.add.text(485, 1500, "LEVEL", { fontSize: '30px', fill: '#fff', fontStyle: 'bold' }).setOrigin(.5);
-    this.levelText = this.add.bitmapText(485, 1550, 'topaz', '1', 80).setOrigin(.5).setTint(0xcbf7ff).setAlpha(1);
+    this.levelText = this.add.bitmapText(485, 1550, 'topaz', onLevel, 80).setOrigin(.5).setTint(0xcbf7ff).setAlpha(1);
 
 
 

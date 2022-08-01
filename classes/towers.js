@@ -147,7 +147,11 @@ class Turret extends Phaser.GameObjects.Image {
     this.graphics.clear()
     this.circle.setTo(this.x, this.y, offset + this.upGradeRadius * cellSize)
     this.range = offset + this.upGradeRadius * cellSize;
-    this.graphics.strokeCircleShape(this.circle)
+    if (this.name == 'Bomb') {
+      this.graphics.clear()
+      this.graphics.strokeCircleShape(this.circle)
+    }
+
 
 
     var newFrame = this.frameNum + 7
@@ -174,6 +178,7 @@ let towers = [
     power: 10,
     hp: 10,
     sellAmount: 10,
+    fixAmount: 5,
     type: 'projectile',
     upGradeFR: 800,
     upGradePower: 15,
@@ -192,6 +197,7 @@ let towers = [
     power: 20,
     hp: 20,
     sellAmount: 15,
+    fixAmount: 10,
     bulletSpeed: 1000,
     upGradeFR: 600,
     upGradePower: 15,
@@ -211,6 +217,7 @@ let towers = [
     power: 20,
     hp: 30,
     sellAmount: 50,
+    fixAmount: 40,
     bulletSpeed: 1500,
     upGradeFR: 700,
     upGradePower: 30,
@@ -230,6 +237,7 @@ let towers = [
     power: 25,
     hp: 40,
     sellAmount: 75,
+    fixAmount: 55,
     bulletSpeed: 1500,
     upGradeFR: 700,
     upGradePower: 40,
@@ -245,10 +253,11 @@ let towers = [
     name: 'Rapid',
     description: 'A machine gun',
     type: 'projectile',
-    cost: 120,
+    cost: 175,
     power: 20,
     hp: 50,
-    sellAmount: 60,
+    sellAmount: 85,
+    fixAmount: 65,
     bulletSpeed: 1800,
     upGradeFR: 100,
     upGradePower: 30,
@@ -264,10 +273,11 @@ let towers = [
     name: 'Stun',
     description: 'Does no damage, but temporarily pauses an enemy',
     type: 'stun',
-    cost: 130,
+    cost: 175,
     power: 20,
     hp: 60,
-    sellAmount: 65,
+    sellAmount: 85,
+    fixAmount: 65,
     bulletSpeed: 800,
     upGradeFR: 100,
     upGradePower: 30,
@@ -283,10 +293,11 @@ let towers = [
     name: 'Missle',
     description: 'Shoots at all enemie in range. Not blocked by walls',
     type: 'missle',
-    cost: 150,
+    cost: 200,
     power: 30,
     hp: 70,
-    sellAmount: 75,
+    sellAmount: 100,
+    fixAmount: 80,
     bulletSpeed: 800,
     upGradeFR: 800,
     upGradePower: 50,

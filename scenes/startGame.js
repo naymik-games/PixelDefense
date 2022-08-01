@@ -9,6 +9,14 @@ class startGame extends Phaser.Scene {
   }
   create() {
 
+    gameDataEndless = JSON.parse(localStorage.getItem('DefenseSaveEndless'));
+    if (gameDataEndless === null || gameDataEndless.length <= 0) {
+      localStorage.setItem('DefenseSaveEndless', JSON.stringify(defaultValuesEndless));
+      gameDataEndless = defaultValues;
+    }
+
+
+
     gameData = JSON.parse(localStorage.getItem('DefenseSave'));
     if (gameData === null || gameData.length <= 0) {
       localStorage.setItem('DefenseSave', JSON.stringify(defaultValues));
@@ -110,8 +118,17 @@ class startGame extends Phaser.Scene {
 
 
 
-
-
+    var startEndless = this.add.bitmapText(game.config.width / 2, 1450, 'topaz', 'Start New Endless ', 50).setOrigin(.5).setTint(0xffffff);
+    startEndless.setInteractive();
+    startEndless.on('pointerdown', this.clickHandlerEndless, this);
+    if (gameDataEndless.playerData != null) {
+      var tempText = gameDataEndless.onLevel + 1
+      var tempText2 = gameDataEndless.onWave + 1
+      var continueEndless = this.add.bitmapText(game.config.width / 2, 1550, 'topaz', 'Continue Level ' + tempText + ', Wave ' + tempText2, 50).setOrigin(.5).setTint(0xffffff);
+      continueEndless.setInteractive();
+      continueEndless.on('pointerdown', this.continueGameEndless, this);
+      //continueEndless.on('pointerdown', this.clickHandlerEndless, this);
+    }
 
 
 
@@ -122,7 +139,7 @@ class startGame extends Phaser.Scene {
   }
   continueGame() {
     money = null
-
+    gameMode = 'levels'
     load = 'continue'
     onLevel = gameData.onLevel
     this.scene.start('playGame');
@@ -130,11 +147,26 @@ class startGame extends Phaser.Scene {
   }
   clickHandler(t) {
     onLevel = t.level
-
+    gameMode = 'levels'
 
     load = 'new'
     this.scene.start('playGame');
     this.scene.launch('UI');
   }
+  clickHandlerEndless(t) {
+    onLevel = 'E'
+    gameMode = 'endless'
 
+    load = 'new'
+    this.scene.start('playGame');
+    this.scene.launch('UI');
+  }
+  continueGameEndless() {
+    money = null
+    gameMode = 'endless'
+    load = 'continue'
+    onLevel = 'E'
+    this.scene.start('playGame');
+    this.scene.launch('UI');
+  }
 }
