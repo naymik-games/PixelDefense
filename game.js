@@ -310,7 +310,7 @@ class playGame extends Phaser.Scene {
       var enemyList = this.createWave()
 
       var delays = [800, 900, 1000, 1100, 1200, 1300, 1400, 1500]
-      var spawnDelay = delays[Phaser.Math.Between(0, delays.length - 1)]
+      var spawnDelay = 1500 - this.onWave * 50
 
       this.level.waves.push({
         spawnRate: spawnDelay,
@@ -333,29 +333,34 @@ class playGame extends Phaser.Scene {
   createWave() {
     var wave = []
     //first wave
-    if (this.onWave < 3) {
+    if (this.onWave < 2) {
       var w1 = this.createEnemySegment(0, 10)
       wave.push(...w1)
       var w2 = this.createEnemySegment(1, 10)
       wave.push(...w2)
       var w3 = this.createEnemySegment(0, 10)
       wave.push(...w3)
-    } else if (this.onWave < 6) {
+    } else if (this.onWave < 4) {
       var w1 = this.createEnemySegment(1, 10)
       wave.push(...w1)
       var w2 = this.createEnemySegment(0, 10)
       wave.push(...w2)
       var w3 = this.createEnemySegment(1, 10)
       wave.push(...w3)
-    } else if (this.onWave < 9) {
-      var w1 = this.createEnemySegment(1, 10)
+    } else if (this.onWave < 6) {
+      var w1 = this.createEnemySegment(2, 10)
       wave.push(...w1)
-      var w2 = this.createEnemySegment(2, 10)
+      var w2 = this.createEnemySegment(0, 10)
       wave.push(...w2)
-      var w4 = this.createEnemySegment(0, 10)
-      wave.push(...w4)
-      var w3 = this.createEnemySegment(1, 10)
-      wave.push(...w3)
+      var w4 = this.createEnemySegment(2, 10)
+
+    } else if (this.onWave < 8) {
+      var w1 = this.createEnemySegment(3, 10)
+      wave.push(...w1)
+      var w2 = this.createEnemySegment(0, 10)
+      wave.push(...w2)
+      var w4 = this.createEnemySegment(3, 10)
+
     } else {
       var w1 = this.createEnemySegment(2, 10)
       wave.push(...w1)
@@ -366,6 +371,77 @@ class playGame extends Phaser.Scene {
       var w3 = this.createEnemySegment(1, 10)
       wave.push(...w3)
     }
+    ////////
+    if (this.onWave == 1) {
+      var w1 = this.createEnemySegment(2, 15)
+      wave.push(...w1)
+
+    } else if (this.onWave == 2) {
+      var w1 = this.createEnemySegment(3, 15)
+      wave.push(...w1)
+
+    } else if (this.onWave == 3) {
+      var w1 = this.createEnemySegment(3, 10)
+      wave.push(...w1)
+      var w2 = this.createEnemySegment(4, 5)
+      wave.push(...w2)
+
+    } else if (this.onWave == 4) {
+      var w1 = this.createEnemySegment(2, 10)
+      wave.push(...w1)
+      var w2 = this.createEnemySegment(5, 5)
+      wave.push(...w2)
+
+    } else if (this.onWave == 5) {
+      var w1 = this.createEnemySegment(4, 10)
+      wave.push(...w1)
+      var w2 = this.createEnemySegment(5, 5)
+      wave.push(...w2)
+
+    } else if (this.onWave == 6) {
+      var w1 = this.createEnemySegment(5, 10)
+      wave.push(...w1)
+      var w2 = this.createEnemySegment(6, 5)
+      wave.push(...w2)
+
+    } else if (this.onWave == 7) {
+      var w1 = this.createEnemySegment(3, 30)
+      wave.push(...w1)
+      var w2 = this.createEnemySegment(5, 15)
+      wave.push(...w2)
+
+    } else if (this.onWave == 8) {
+      var w1 = this.createEnemySegment(4, 30)
+      wave.push(...w1)
+      var w2 = this.createEnemySegment(1, 15)
+      wave.push(...w2)
+      var w2 = this.createEnemySegment(5, 15)
+      wave.push(...w2)
+
+    } else if (this.onWave == 9) {
+      var w1 = this.createEnemySegment(5, 30)
+      wave.push(...w1)
+      var w2 = this.createEnemySegment(3, 15)
+      wave.push(...w2)
+      var w2 = this.createEnemySegment(6, 15)
+      wave.push(...w2)
+      var w2 = this.createEnemySegment(0, 20)
+      wave.push(...w2)
+
+    } else if (this.onWave > 9) {
+      var randEn = Phaser.Math.Between(0, 6)
+      var randCount = Phaser.Math.Between(10, 40)
+      var w1 = this.createEnemySegment(randEn, randCount)
+      wave.push(...w1)
+      var randEn2 = Phaser.Math.Between(0, 6)
+      var randCount2 = Phaser.Math.Between(10, 40)
+      var w2 = this.createEnemySegment(randEn2, randCount2)
+      wave.push(...w2)
+    }
+
+
+
+    //////
     /*   if (this.onWave % 3 == 0) {
   
       } */
@@ -378,7 +454,7 @@ class playGame extends Phaser.Scene {
       var w3 = this.createEnemySegment(3, 5 + this.onWave * 10)
       wave.push(...w3)
     }
-    wave.push(7)
+    wave.push(this.createEnemySegment(7, 1 + Math.floor(this.onWave / 2)))
     return wave
   }
   createEnemySegment(enemy, n) {
