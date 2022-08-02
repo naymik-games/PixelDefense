@@ -49,7 +49,7 @@ class sellMenu extends Phaser.Scene {
       var text2 = this.add.text(this.rectPosition.x + this.rectPosition.width - 30, this.rectPosition.y + 100, name, { fontSize: '35px', fill: '#fff' }).setOrigin(1, 0)
       text2.setInteractive();
       var upText;
-      sellAmount = towerAtLocation.sellAmount
+      sellAmount = towerAtLocation.upGradeCost
       text2.text = "Upgrade";
 
       upText = this.add.text(text2.x, text2.y + 35, "$" + sellAmount, { fontSize: '30px', fill: '#fff' }).setOrigin(1, 0);
@@ -98,6 +98,7 @@ class sellMenu extends Phaser.Scene {
     this.scene.resume('UI')
   }
   upgradeTower() {
+    if (money.amount < towerAtLocation.upGradeCost) { return }
     money.amount -= towerAtLocation.upGradeCost;
 
     this.UI.moneyText.setText(money.amount)

@@ -86,6 +86,7 @@ class playGame extends Phaser.Scene {
 
     if (gameMode == 'levels') {
       this.level = levels[onLevel]
+      this.createLevelWave()
     } else {
       if (load == 'new') {
 
@@ -318,6 +319,8 @@ class playGame extends Phaser.Scene {
         waveEnemies: enemyList
       })
       this.saveProgress()
+    } else {
+      this.createLevelWave()
     }
 
     this.UI.startWave.setInteractive()
@@ -329,6 +332,15 @@ class playGame extends Phaser.Scene {
     this.placeRandomBlocks(this.level.waves[this.onWave].addBlocks)
 
 
+  }
+  createLevelWave() {
+    var wave = []
+    for (let w = 0; w < this.level.waves[this.onWave].waveSetup.length; w++) {
+      const element = this.level.waves[this.onWave].waveSetup[w];
+      var w1 = this.createEnemySegment(element[0], element[1])
+      wave.push(...w1)
+    }
+    this.level.waves[this.onWave].waveEnemies = wave
   }
   createWave() {
     var wave = []
@@ -643,7 +655,7 @@ class playGame extends Phaser.Scene {
       for (var i = 0; i < towersUnits.length; i++) {
         if (towersUnits[i].active) {
           between = Phaser.Math.Distance.Between(pointer.x, pointer.y, towersUnits[i].x, towersUnits[i].y);
-          if (between < 10) {
+          if (between < 20) {
             towerAtLocation = towersUnits[i];
           }
         }
