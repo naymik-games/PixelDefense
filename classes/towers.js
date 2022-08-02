@@ -184,7 +184,7 @@ let towers = [
     upGradeFR: 800,
     upGradePower: 15,
     upGradeBS: 900,
-    upGradeCost: 15,
+    upGradeCost: 10,
     upGradeRadius: 2.5
   },
   {
@@ -225,7 +225,7 @@ let towers = [
     upGradeFR: 700,
     upGradePower: 30,
     upGradeBS: 900,
-    upGradeCost: 200,
+    upGradeCost: 150,
     upGradeRadius: 5.5
 
   },
@@ -246,7 +246,7 @@ let towers = [
     upGradeFR: 1000,
     upGradePower: 35,
     upGradeBS: 900,
-    upGradeCost: 110,
+    upGradeCost: 75,
     upGradeRadius: 4.5
 
   },
@@ -309,7 +309,7 @@ let towers = [
     upGradeFR: 800,
     upGradePower: 50,
     upGradeBS: 1100,
-    upGradeCost: 110,
+    upGradeCost: 150,
     upGradeRadius: 6.5
 
   }
