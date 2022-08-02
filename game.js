@@ -149,7 +149,7 @@ class playGame extends Phaser.Scene {
       } else {
         //else choose random map. One is just blocks, other is rooms
         var mapType = Phaser.Math.Between(0, 5)
-        if (mapType < 4) {
+        if (mapType < 0) {
           this.map = []
           for (let y = 0; y < this.rows; y++) {
             var temp = []
@@ -161,8 +161,8 @@ class playGame extends Phaser.Scene {
 
           this.placeRandomBlocks(this.level.numberOfBlocks)
         } else {
-          var map = new Rooms(22, 14, 3, 5, 13)
-          this.map = map.dungeon
+          var map = Phaser.Math.Between(0, setMaps.length - 1)
+          this.map = setMaps[map]
 
           for (let y = 0; y < this.map.length; y++) {
 
@@ -251,7 +251,7 @@ class playGame extends Phaser.Scene {
   startWave() {
     // console.log(Date.now())
 
-
+    console.log(this.level.waves[this.onWave])
     var timer = this.time.addEvent({
       delay: this.level.waves[this.onWave].spawnRate,                // ms
       callback: function () {
@@ -445,16 +445,8 @@ class playGame extends Phaser.Scene {
     /*   if (this.onWave % 3 == 0) {
   
       } */
-    if (this.onWave >= 3 && this.onWave < 6) {
-      var w3 = this.createEnemySegment(2, 5 + this.onWave * 10)
-    }
-    if (this.onWave >= 6 && this.onWave < 9) {
-      var w1 = this.createEnemySegment(2, 5 + this.onWave * 10)
-      wave.push(...w1)
-      var w3 = this.createEnemySegment(3, 5 + this.onWave * 10)
-      wave.push(...w3)
-    }
-    wave.push(this.createEnemySegment(7, 1 + Math.floor(this.onWave / 2)))
+
+    wave.push(...this.createEnemySegment(7, 1 + Math.floor(this.onWave / 2)))
     return wave
   }
   createEnemySegment(enemy, n) {
@@ -561,10 +553,10 @@ class playGame extends Phaser.Scene {
       var done = false
       while (!done) {
         if (b == 0) {
-          var i = Phaser.Math.Between(0, Math.floor(this.rows / 4))
+          var i = Phaser.Math.Between(0, 3)
           var j = Phaser.Math.Between(0, Math.floor(this.cols / 2))
         } else {
-          var i = Phaser.Math.Between(0, Math.floor(this.rows / 4))
+          var i = Phaser.Math.Between(0, 3)
           var j = Phaser.Math.Between(Math.floor(this.cols / 2), this.cols - 1)
         }
         // var i = Phaser.Math.Between(0, Math.floor(this.rows / 4))
@@ -585,7 +577,7 @@ class playGame extends Phaser.Scene {
     for (let b = 0; b < count; b++) {
       var done = false
       while (!done) {
-        var i = Phaser.Math.Between(this.rows - Math.floor(this.rows / 4), this.rows - 1)
+        var i = Phaser.Math.Between(this.rows - 4, this.rows - 1)
         var j = Phaser.Math.Between(0, this.cols - 1)
         if (this.map[i][j] == BLANK) {
           var block = this.add.image(offset + j * cellSize, offset + i * cellSize, 'block', 1)
