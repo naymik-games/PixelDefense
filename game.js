@@ -870,10 +870,12 @@ class playGame extends Phaser.Scene {
   }
   damageTurretEnemy(turret, bullet) {
     if (!turret.isHit) {
+      turret.isHit = true
       bullet.setActive(false);
       bullet.setVisible(false);
+      bullet.setPosition(-25, -15)
       turret.receiveDamage()
-      turret.isHit = true
+
 
     }
 
