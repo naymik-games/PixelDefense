@@ -5,6 +5,7 @@ let finder
 let path;
 let enemies;
 let bullets;
+let enemyBullets;
 let towerAtLocation;
 var turrets;
 let blocks
@@ -82,6 +83,7 @@ class playGame extends Phaser.Scene {
     enemies = this.physics.add.group({ classType: Enemy, runChildUpdate: true });
     turrets = this.physics.add.group({ runChildUpdate: true });
     bullets = this.physics.add.group({ classType: Bullet, runChildUpdate: true });
+    enemyBullets = this.physics.add.group({ classType: EnemyBullet, runChildUpdate: true });
     blocks = this.physics.add.group();
 
     if (gameMode == 'levels') {
@@ -242,6 +244,7 @@ class playGame extends Phaser.Scene {
     this.physics.add.overlap(enemies, bullets, this.damageEnemy, null, this);
     this.physics.add.overlap(blocks, bullets, this.removeBullet, null, this);
     this.physics.add.overlap(turrets, enemies, this.damageTurret, null, this);
+    this.physics.add.overlap(turrets, enemyBullets, this.damageTurretEnemy, null, this);
     /* this.input.on("pointerdown", this.gemSelect, this);
      this.input.on("pointermove", this.drawPath, this);
      this.input.on("pointerup", this.removeGems, this);
@@ -293,11 +296,19 @@ class playGame extends Phaser.Scene {
 
         })
       } else {
+        var bonus = 0
+        if (this.landed == 0) {
+          bonus = this.onWave * 1
+          money.amount += bonus
+          money.health += 1
+          this.UI.healthText.setText(money.health)
+          this.UI.moneyText.setText(money.amount)
+        }
         this.time.delayedCall(1000, () => {
           this.saveProgress()
           this.scene.pause('playGame')
           this.scene.pause('UI')
-          this.scene.launch('waveDone', { killed: this.killedInWave, landed: this.landed })
+          this.scene.launch('waveDone', { killed: this.killedInWave, landed: this.landed, bonus: bonus })
           this.endWave()
         })
       }
@@ -310,7 +321,7 @@ class playGame extends Phaser.Scene {
     if (gameMode == 'endless') {
       var enemyList = this.createWave()
 
-      var delays = [800, 900, 1000, 1100, 1200, 1300, 1400, 1500]
+      //var delays = [800, 900, 1000, 1100, 1200, 1300, 1400, 1500]
       var spawnDelay = 1500 - this.onWave * 50
 
       this.level.waves.push({
@@ -360,23 +371,23 @@ class playGame extends Phaser.Scene {
       var w3 = this.createEnemySegment(1, 10)
       wave.push(...w3)
     } else if (this.onWave < 6) {
-      var w1 = this.createEnemySegment(2, 10)
+      var w1 = this.createEnemySegment(2, 15)
       wave.push(...w1)
-      var w2 = this.createEnemySegment(0, 10)
+      var w2 = this.createEnemySegment(0, 5)
       wave.push(...w2)
-      var w4 = this.createEnemySegment(2, 10)
+      var w4 = this.createEnemySegment(2, 15)
 
     } else if (this.onWave < 8) {
       var w1 = this.createEnemySegment(3, 10)
       wave.push(...w1)
-      var w2 = this.createEnemySegment(0, 10)
+      var w2 = this.createEnemySegment(1, 10)
       wave.push(...w2)
       var w4 = this.createEnemySegment(3, 10)
 
     } else {
       var w1 = this.createEnemySegment(2, 10)
       wave.push(...w1)
-      var w4 = this.createEnemySegment(0, 10)
+      var w4 = this.createEnemySegment(1, 10)
       wave.push(...w4)
       var w2 = this.createEnemySegment(3, 10)
       wave.push(...w2)
@@ -401,6 +412,8 @@ class playGame extends Phaser.Scene {
     } else if (this.onWave == 4) {
       var w1 = this.createEnemySegment(2, 10)
       wave.push(...w1)
+      var w2 = this.createEnemySegment(6, 1)
+      wave.push(...w2)
       var w2 = this.createEnemySegment(5, 5)
       wave.push(...w2)
 
@@ -413,12 +426,16 @@ class playGame extends Phaser.Scene {
     } else if (this.onWave == 6) {
       var w1 = this.createEnemySegment(5, 10)
       wave.push(...w1)
+      var w2 = this.createEnemySegment(6, 1)
+      wave.push(...w2)
       var w2 = this.createEnemySegment(6, 5)
       wave.push(...w2)
 
     } else if (this.onWave == 7) {
       var w1 = this.createEnemySegment(3, 30)
       wave.push(...w1)
+      var w2 = this.createEnemySegment(1, 20)
+      wave.push(...w2)
       var w2 = this.createEnemySegment(5, 15)
       wave.push(...w2)
 
@@ -427,28 +444,116 @@ class playGame extends Phaser.Scene {
       wave.push(...w1)
       var w2 = this.createEnemySegment(1, 15)
       wave.push(...w2)
+      var w2 = this.createEnemySegment(2, 15)
+      wave.push(...w2)
       var w2 = this.createEnemySegment(5, 15)
       wave.push(...w2)
 
     } else if (this.onWave == 9) {
       var w1 = this.createEnemySegment(5, 30)
       wave.push(...w1)
-      var w2 = this.createEnemySegment(3, 15)
+      var w2 = this.createEnemySegment(3, 25)
       wave.push(...w2)
-      var w2 = this.createEnemySegment(6, 15)
-      wave.push(...w2)
-      var w2 = this.createEnemySegment(0, 20)
+      var w2 = this.createEnemySegment(1, 20)
       wave.push(...w2)
 
-    } else if (this.onWave > 9) {
+      var w2 = this.createEnemySegment(6, 4)
+      wave.push(...w2)
+      var w2 = this.createEnemySegment(2, 20)
+      wave.push(...w2)
+
+    } else if (this.onWave == 10) {
+      var w1 = this.createEnemySegment(5, 30)
+      wave.push(...w1)
+      var w2 = this.createEnemySegment(3, 20)
+      wave.push(...w2)
+      var w2 = this.createEnemySegment(6, 7)
+      wave.push(...w2)
+      var w2 = this.createEnemySegment(4, 15)
+      wave.push(...w2)
+      var w2 = this.createEnemySegment(2, 20)
+      wave.push(...w2)
+
+      var w2 = this.createEnemySegment(3, 15)
+      wave.push(...w2)
+
+    } else if (this.onWave == 11) {
+      var w2 = this.createEnemySegment(6, 2)
+      wave.push(...w2)
+      var w2 = this.createEnemySegment(4, 10)
+      wave.push(...w2)
+      var w1 = this.createEnemySegment(5, 30)
+      wave.push(...w1)
+      var w2 = this.createEnemySegment(3, 15)
+      wave.push(...w2)
+      var w2 = this.createEnemySegment(0, 10)
+      wave.push(...w2)
+      var w2 = this.createEnemySegment(6, 5)
+      wave.push(...w2)
+      var w2 = this.createEnemySegment(4, 15)
+      wave.push(...w2)
+      var w2 = this.createEnemySegment(2, 20)
+      wave.push(...w2)
+
+      var w2 = this.createEnemySegment(3, 15)
+      wave.push(...w2)
+
+    } else if (this.onWave == 12) {
+      var w2 = this.createEnemySegment(6, 3)
+      wave.push(...w2)
+      var w2 = this.createEnemySegment(4, 10)
+      wave.push(...w2)
+      var w1 = this.createEnemySegment(5, 30)
+      wave.push(...w1)
+      var w2 = this.createEnemySegment(3, 15)
+      wave.push(...w2)
+      var w2 = this.createEnemySegment(0, 10)
+      wave.push(...w2)
+      var w2 = this.createEnemySegment(6, 5)
+      wave.push(...w2)
+      var w2 = this.createEnemySegment(4, 15)
+      wave.push(...w2)
+      var w2 = this.createEnemySegment(2, 30)
+      wave.push(...w2)
+      var w1 = this.createEnemySegment(5, 10)
+      wave.push(...w1)
+      var w2 = this.createEnemySegment(3, 15)
+      wave.push(...w2)
+
+    } else if (this.onWave > 12) {
       var randEn = Phaser.Math.Between(0, 6)
       var randCount = Phaser.Math.Between(10, 40)
       var w1 = this.createEnemySegment(randEn, randCount)
       wave.push(...w1)
+      var randEn2 = Phaser.Math.Between(3, 6)
+      var randCount2 = Phaser.Math.Between(10, 40)
+      var w2 = this.createEnemySegment(randEn2, randCount2)
+      wave.push(...w2)
+      var randEn2 = Phaser.Math.Between(1, 4)
+      var randCount2 = Phaser.Math.Between(10, 40)
+      var w2 = this.createEnemySegment(randEn2, randCount2)
+      wave.push(...w2)
+      var randEn2 = Phaser.Math.Between(5, 6)
+      var randCount2 = Phaser.Math.Between(10, 40)
+      var w2 = this.createEnemySegment(randEn2, randCount2)
+      wave.push(...w2)
+      var randEn2 = Phaser.Math.Between(2, 6)
+      var randCount2 = Phaser.Math.Between(10, 40)
+      var w2 = this.createEnemySegment(randEn2, randCount2)
+      wave.push(...w2)
       var randEn2 = Phaser.Math.Between(0, 6)
       var randCount2 = Phaser.Math.Between(10, 40)
       var w2 = this.createEnemySegment(randEn2, randCount2)
       wave.push(...w2)
+      var randEn2 = Phaser.Math.Between(2, 4)
+      var randCount2 = Phaser.Math.Between(10, 40)
+      var w2 = this.createEnemySegment(randEn2, randCount2)
+      wave.push(...w2)
+      var randEn2 = Phaser.Math.Between(4, 5)
+      var randCount2 = Phaser.Math.Between(10, 40)
+      var w2 = this.createEnemySegment(randEn2, randCount2)
+      wave.push(...w2)
+
     }
 
 
@@ -737,6 +842,7 @@ class playGame extends Phaser.Scene {
     towerAtLocation = null
 
   }
+
   upgradeTower() {
     this.map[this.selectedTile.i][this.selectedTile.j] += TOWERUPBASE
     towerAtLocation.upgradeTower()
@@ -762,6 +868,16 @@ class playGame extends Phaser.Scene {
       enemy.receiveDamage(bullet.power, this, bullet.type);
     }
   }
+  damageTurretEnemy(turret, bullet) {
+    if (!turret.isHit) {
+      bullet.setActive(false);
+      bullet.setVisible(false);
+      turret.receiveDamage()
+      turret.isHit = true
+
+    }
+
+  }
   damageTurret(turret, enemy) {
     if (!turret.isHit) {
       turret.receiveDamage()
@@ -781,81 +897,4 @@ class playGame extends Phaser.Scene {
 
 
 
-var Bullet = new Phaser.Class({
 
-  Extends: Phaser.GameObjects.Image,
-
-  initialize:
-
-    function Bullet(scene) {
-      Phaser.GameObjects.Image.call(this, scene, 0, 0, 'bullet');
-      this.setDepth(2)
-      // 
-      this.incX = 0;
-      this.incY = 0;
-      this.lifespan = 0;
-      this.power = 0
-      this.speed = Phaser.Math.GetSpeed(0, 1);
-      this.type = 'projectile'
-      this.scene = scene
-    },
-
-  fire: function (x, y, angle, power, speed, type, towerI, towerJ, range) {
-    this.setActive(true);
-    this.setVisible(true);
-    this.type = type
-    if (this.type == 'laser') {
-      var thisRange = range * 2
-    } else {
-      var thisRange = range
-    }
-
-    this.range = thisRange
-    this.towerI = towerI
-    this.towerJ = towerJ
-
-    //addBullet(this.x, this.y, angle, this.power, this.bulletSpeed, this.type);
-    //  Bullets fire from the middle of the screen to the given x/y
-    this.setPosition(x, y);
-    this.speed = Phaser.Math.GetSpeed(speed, 1);
-
-    //console.log(this.speed)
-    this.power = power
-    //  we don't need to rotate the bullets as they are round
-    //    this.setRotation(angle);
-
-    this.dx = Math.cos(angle);
-    this.dy = Math.sin(angle);
-
-    this.lifespan = 1000 //* this.speed;
-    /* console.log(this.x)
-    console.log(this.y)
-    console.log(this.towerI)
-    console.log(this.towerJ)
-    console.log(this.range) */
-  },
-
-  update: function (time, delta) {
-    this.lifespan -= this.speed * delta;
-
-    this.x += this.dx * (this.speed * delta);
-    this.y += this.dy * (this.speed * delta);
-
-    /*  if (this.lifespan < 0) {
-       this.setActive(false);
-       this.setVisible(false);
-     } */
-    if (Phaser.Math.Distance.Between(this.x, this.y, offset + this.towerJ * cellSize, offset + this.towerI * cellSize) > this.range) {
-      this.setActive(false);
-      this.setVisible(false);
-    }
-  }
-
-});
-function addBullet(x, y, angle, power, speed, type, towerI, towerJ, range) {
-  var bullet = bullets.get();
-  if (bullet) {
-    // console.log(type)
-    bullet.fire(x, y, angle, power, speed, type, towerI, towerJ, range);
-  }
-}

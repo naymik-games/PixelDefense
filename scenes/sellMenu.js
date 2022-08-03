@@ -18,11 +18,13 @@ class sellMenu extends Phaser.Scene {
     var that = this;
     // that.createButton(0, 100, 'Upgrade');
     that.createButton(0, 100, 'Sell');
-    if (!towerAtLocation.upgraded) {
+    if (!towerAtLocation.upgraded && money.amount >= towerAtLocation.upGradeCost) {
       that.createButton(0, 100, 'Upgrade');
     }
+    if (money.amount >= towerAtLocation.fixAmount) {
+      that.createButton(0, 100, 'Fix')
+    }
 
-    that.createButton(0, 100, 'Fix')
     that.createStats()
 
   }
@@ -62,7 +64,7 @@ class sellMenu extends Phaser.Scene {
       text3.text = "Fix";
 
       fixText = this.add.text(text3.x, text3.y + 35, "$" + fixAmount, { fontSize: '30px', fill: '#fff' }).setOrigin(1, 0);
-      // text3.on('pointerup', this.upgradeTower.bind(this, text3));
+      text3.on('pointerup', this.fixTower.bind(this, text3));
     } else {
       var text = this.add.text(this.rectPosition.x + 30, this.rectPosition.y + 100, name, { fontSize: '35px', fill: '#fff' })
 
@@ -74,16 +76,7 @@ class sellMenu extends Phaser.Scene {
       sellText = this.add.text(text.x, text.y + 35, "$" + sellAmount, { fontSize: '30px', fill: '#fff' });
 
       text.on('pointerup', this.sellTower.bind(this, text));
-      /*    text.on('pointerdown', function(pointer, gameObject) {
-              towerAtLocation.active = false;
-             towerAtLocation.visible = false;
-             towerAtLocation.updateCount.setActive(false);
-             towerAtLocation.updateCount.setVisible(false);
-             money.amount = money.amount + sellAmount;
-             towerAtLocation.upgrades = 0;
-             map[towerXY.y][towerXY.x] = 0; 
-             game.scene.stop('SellUpgrade');
-         }, sellAmount, tower); */
+
     }
 
     //text.setOrigin(0.5, 0.5);
@@ -93,6 +86,15 @@ class sellMenu extends Phaser.Scene {
 
     this.UI.moneyText.setText(money.amount)
     this.Main.removeTower(towerAtLocation)
+    this.scene.stop()
+    this.scene.resume('playGame')
+    this.scene.resume('UI')
+  }
+  fixTower() {
+    money.amount -= towerAtLocation.fixAmount;
+
+    this.UI.moneyText.setText(money.amount)
+    towerAtLocation.hp = towerAtLocation.hpMax
     this.scene.stop()
     this.scene.resume('playGame')
     this.scene.resume('UI')

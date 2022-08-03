@@ -1,4 +1,4 @@
-var cacheName = 'PixelDefense v0.2';
+var cacheName = 'PixelDefense v0.4';
 var filesToCache = [
   '/',
   '/index.html',
@@ -24,10 +24,12 @@ var filesToCache = [
   '/classes/enemies.js',
   '/classes/mapTest.js',
   '/classes/levels.js',
+  '/classes/bullets.js',
 
   '/assets/sprites/blank.png',
   '/assets/sprites/blocks.png',
   '/assets/sprites/bullet.png',
+  '/assets/sprites/bullet_enemy.png',
   '/assets/sprites/gems.png',
   '/assets/sprites/icons.png',
   '/assets/sprites/particles.png',

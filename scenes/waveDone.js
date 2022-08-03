@@ -10,6 +10,7 @@ class waveDone extends Phaser.Scene {
   init(data) {
     this.killed = data.killed;
     this.landed = data.landed
+    this.bonus = data.bonus
 
   }
   create() {
@@ -18,7 +19,7 @@ class waveDone extends Phaser.Scene {
     this.header.displayHeight = 300; */
 
     var width = 800,
-      height = 300,
+      height = 400,
       x = game.config.width / 2 - width / 2,
       y = game.config.height / 2 - height / 2,
       rect,
@@ -36,11 +37,12 @@ class waveDone extends Phaser.Scene {
 
 
 
+    this.outcomeText = this.add.bitmapText(game.config.width / 2, game.config.height / 2 - 125, 'topaz', 'SUCCESS!', 60).setOrigin(.5).setTint(0xcbf7ff).setAlpha(1);
 
-    var makeStatText = 'Killed: ' + this.killed + ' Landed: ' + this.landed
-    this.statsText = this.add.bitmapText(game.config.width / 2, game.config.height / 2 - 75, 'topaz', makeStatText, 60).setOrigin(.5).setTint(0xcbf7ff).setAlpha(1);
+    var makeStatText = 'Killed: ' + this.killed + ' - Landed: ' + this.landed + ' - Bonus: ' + this.bonus
+    this.statsText = this.add.bitmapText(game.config.width / 2, game.config.height / 2 - 25, 'topaz', makeStatText, 40).setOrigin(.5).setTint(0xcbf7ff).setAlpha(1);
 
-    var buttonTest = new Button(this, game.config.width / 2, game.config.height / 2 + 75, 'OK', buttonStyle1, this.close, true)
+    var buttonTest = new Button(this, game.config.width / 2, game.config.height / 2 + 125, 'OK', buttonStyle1, this.close, true)
   }
   close() {
 

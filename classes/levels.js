@@ -27,7 +27,7 @@ let levels = [{
     num: 0,
     spawnRate: 1500,
     addBlocks: 0,
-    waveSetup: [[0, 10]],
+    waveSetup: [[0, 5], [4, 1]],
     waveEnemies: null // 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0
   },
   {

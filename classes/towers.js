@@ -100,6 +100,7 @@ class Turret extends Phaser.GameObjects.Image {
   }
   receiveDamage() {
     this.hp -= 1
+    this.setAlpha(this.hp / this.hpMax)
     this.scene.time.addEvent({
       delay: 2000,                // ms
       callback: function () {

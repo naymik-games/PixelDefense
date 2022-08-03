@@ -19,7 +19,7 @@ var Enemy = new Phaser.Class({
       this.scene = scene
       this.end = endPoints[0]
       //console.log(this.spawn)
-      this.nextTic = 1000
+      this.nextTic = 0
       this.name = ''
       this.hp = 0
       this.reward = 0
@@ -60,7 +60,7 @@ var Enemy = new Phaser.Class({
     this.reward = template.reward
     this.speed = template.speed
     this.frame = template.frame
-
+    this.canShoot = template.canShoot
     this.health = this.hp
     this.setFrame(this.frame)
 
@@ -138,11 +138,51 @@ var Enemy = new Phaser.Class({
       //console.log(scene.killedInWave)
     }
   },
+  getTower: function (x, y, distance, notthisone) {
+    var turretsTargets = turrets.getChildren();
+
+    if (turretsTargets.length > 0) {
+      var done = false
+      while (!done) {
+        var rand = Phaser.Math.Between(0, turretsTargets.length - 1)
+        if (turretsTargets[rand].active) {
+          done = true
+          return turretsTargets[rand]
+        }
+      }
+    }
+
+
+
+
+    /*   for (var i = 0; i < turretsTargets.length; i++) {
+        if (turretsTargets[i].active) { //&& Phaser.Math.Distance.Between(x, y, enemyUnits[i].x, enemyUnits[i].y) < distance && enemyUnits[i] != notthisone
+  
+          return turretsTargets[i];
+  
+  
+        }
+      }*/
+    return false;
+  },
+  fire: function () {
+    var tower = this.getTower()
+    var rand = Phaser.Math.Between(1, 10)
+    if (tower && rand > 7) {
+
+      addEnemyBullet(this.x, this.y, tower.x, tower.y)
+    }
+  },
   update: function (time, delta) {
     this.healthbar.setText(this.health)
     this.healthbar.x = this.x - this.healthbar.width / 2;
     this.healthbar.y = this.y - (this.height + 5);
-
+    if (this.canShoot) {
+      if (time > this.nextTic) {
+        this.fire();
+        this.nextTic = time + 5500;
+      }
+    }
   }
 
 
@@ -163,56 +203,64 @@ let enemyTypes = [
     hp: 35,
     reward: 1,
     speed: 1000,
-    frame: 0
+    frame: 0,
+    canShoot: false
   },
   {
     name: 'Muscle',
     hp: 75,
     reward: 2,
     speed: 1200,
-    frame: 1
+    frame: 1,
+    canShoot: false
   },
   {
     name: 'Speedy',
     hp: 75,
     reward: 3,
-    speed: 500,
-    frame: 2
+    speed: 700,
+    frame: 2,
+    canShoot: false
   },
   {
     name: 'Strong and Fast',
     hp: 135,
     reward: 4,
-    speed: 700,
-    frame: 3
+    speed: 6,
+    frame: 3,
+    canShoot: false
   },
   {
     name: 'Speedy 2',
-    hp: 300,
+    hp: 200,
     reward: 4,
     speed: 400,
-    frame: 4
+    frame: 4,
+    canShoot: false
   },
   {
     name: 'Stronger 2',
     hp: 375,
     reward: 4,
     speed: 1000,
-    frame: 5
+    frame: 5,
+    canShoot: false
   },
   {
     name: 'Tank',
     hp: 650,
     reward: 5,
     speed: 1200,
-    frame: 6
+    frame: 6,
+    canShoot: true
   },
   {
     name: 'Boss',
     hp: 250,
     reward: 10,
-    speed: 1500,
-    frame: 7
+    speed: 1200,
+    frame: 7,
+    canShoot: true
   }
 ]
 
