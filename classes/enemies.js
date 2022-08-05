@@ -27,6 +27,7 @@ var Enemy = new Phaser.Class({
       this.frame = 0
       this.health = 0
       this.stunned = false
+
       this.healthbar = scene.add.text(0, 0, "22", { fontSize: '30px', fill: '#fff', fontStyle: 'bold' });
       this.healthbar.setOrigin(0, 0);
       /* this.emitter = scene.add.particles('particle').createEmitter({
@@ -49,7 +50,7 @@ var Enemy = new Phaser.Class({
       var key = keys[i];
       this[key] = template[key];
     } */
-
+    this.nextTic = 0
     this.name = template.name
     if (this.name == 'Boss') {
       var extra = wave * 100
@@ -226,7 +227,7 @@ let enemyTypes = [
     name: 'Strong and Fast',
     hp: 135,
     reward: 4,
-    speed: 6,
+    speed: 600,
     frame: 3,
     canShoot: false
   },

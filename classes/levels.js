@@ -5,7 +5,7 @@ let endlessLevel = {
   startHealth: 15,
   numberOfWaves: 100,
   numberOfSpawnPoints: Phaser.Math.Between(1, 2),
-  numberOfBlocks: 30,
+  numberOfBlocks: 45,
   enemyHitForHealth: 1,
   waves: []
 }

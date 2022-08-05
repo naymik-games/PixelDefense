@@ -203,7 +203,7 @@ let towers = [
     fixAmount: 10,
     bulletSpeed: 1000,
     upGradeFR: 600,
-    upGradePower: 15,
+    upGradePower: 25,
     upGradeBS: 1000,
     upGradeCost: 20,
     upGradeRadius: 3.5
@@ -233,7 +233,7 @@ let towers = [
   {
     radius: 2.5,
     frameNum: 3,
-    fireRate: 1300,
+    fireRate: 1400,
     name: 'Bomb',
     description: 'Every enemy within range will be damaged each time it fires',
     type: 'bomb',
@@ -244,7 +244,7 @@ let towers = [
     sellAmount: 75,
     fixAmount: 55,
     bulletSpeed: 1500,
-    upGradeFR: 1000,
+    upGradeFR: 1200,
     upGradePower: 35,
     upGradeBS: 900,
     upGradeCost: 75,
@@ -266,7 +266,7 @@ let towers = [
     fixAmount: 65,
     bulletSpeed: 1800,
     upGradeFR: 100,
-    upGradePower: 30,
+    upGradePower: 25,
     upGradeBS: 900,
     upGradeCost: 90,
     upGradeRadius: 4.5

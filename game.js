@@ -562,8 +562,8 @@ class playGame extends Phaser.Scene {
     /*   if (this.onWave % 3 == 0) {
   
       } */
-
-    wave.push(...this.createEnemySegment(7, 1 + Math.floor(this.onWave / 2)))
+    var wE = this.createEnemySegment(7, 1 + Math.floor(this.onWave / 2))
+    wave.push(...wE)
     return wave
   }
   createEnemySegment(enemy, n) {
