@@ -95,6 +95,7 @@ class sellMenu extends Phaser.Scene {
 
     this.UI.moneyText.setText(money.amount)
     towerAtLocation.hp = towerAtLocation.hpMax
+    towerAtLocation.setAlpha(1)
     this.scene.stop()
     this.scene.resume('playGame')
     this.scene.resume('UI')

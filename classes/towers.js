@@ -26,9 +26,11 @@ class Turret extends Phaser.GameObjects.Image {
     var enemy = this.checkEnemy(this.x, this.y, this.range, 'blank');
     if (enemy) {
 
-      var angle = Phaser.Math.Angle.Between(this.x, this.y, enemy.x, enemy.y);
-      //addBullet(this.x, this.y, angle);
-      this.angle = (angle + Math.PI / 2) * Phaser.Math.RAD_TO_DEG;
+      if (this.type != 'bomb') {
+        var angle = Phaser.Math.Angle.Between(this.x, this.y, enemy.x, enemy.y);
+        //addBullet(this.x, this.y, angle);
+        this.angle = (angle + Math.PI / 2) * Phaser.Math.RAD_TO_DEG;
+      }
     }
 
   }
@@ -84,7 +86,12 @@ class Turret extends Phaser.GameObjects.Image {
         for (let e = 0; e < enemies.length; e++) {
           const enemy = enemies[e];
           if (this.type == 'bomb') {
-
+            var tween = this.scene.tweens.add({
+              targets: this,
+              scale: 1.2,
+              duration: 100,
+              yoyo: true
+            })
             enemy.receiveDamage(this.power, this.scene);
           } else if (this.type == 'missle') {
             angle = Phaser.Math.Angle.Between(this.x, this.y, enemy.x, enemy.y);
@@ -144,6 +151,9 @@ class Turret extends Phaser.GameObjects.Image {
     this.fireRate = this.upGradeFR
     this.power = this.upGradePower
     this.bulletSpeed = this.upGradeBS
+    this.hpMax += 3
+    this.hp = towerAtLocation.hpMax
+    this.setAlpha(1)
     this.upgraded = true
     this.graphics.clear()
     this.circle.setTo(this.x, this.y, offset + this.upGradeRadius * cellSize)
@@ -231,7 +241,7 @@ let towers = [
 
   },
   {
-    radius: 2.5,
+    radius: 1.5,
     frameNum: 3,
     fireRate: 1400,
     name: 'Bomb',
@@ -247,12 +257,12 @@ let towers = [
     upGradeFR: 1200,
     upGradePower: 35,
     upGradeBS: 900,
-    upGradeCost: 75,
-    upGradeRadius: 4.5
+    upGradeCost: 100,
+    upGradeRadius: 2.5
 
   },
   {
-    radius: 3.5,
+    radius: 2.5,
     frameNum: 4,
     fireRate: 200,
     name: 'Rapid',
@@ -269,7 +279,7 @@ let towers = [
     upGradePower: 25,
     upGradeBS: 900,
     upGradeCost: 90,
-    upGradeRadius: 4.5
+    upGradeRadius: 3.5
 
   },
   {

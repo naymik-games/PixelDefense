@@ -53,9 +53,9 @@ var Enemy = new Phaser.Class({
     this.nextTic = 0
     this.name = template.name
     if (this.name == 'Boss') {
-      var extra = wave * 100
+      var extra = wave * (50 + (wave * 2))
     } else {
-      var extra = wave * 5
+      var extra = wave * (5 + wave)
     }
     this.hp = template.hp + extra
     this.reward = template.reward
@@ -209,7 +209,7 @@ let enemyTypes = [
   },
   {
     name: 'Muscle',
-    hp: 75,
+    hp: 100,
     reward: 2,
     speed: 1200,
     frame: 1,
@@ -233,7 +233,7 @@ let enemyTypes = [
   },
   {
     name: 'Speedy 2',
-    hp: 200,
+    hp: 150,
     reward: 4,
     speed: 400,
     frame: 4,
