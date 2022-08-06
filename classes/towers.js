@@ -88,7 +88,7 @@ class Turret extends Phaser.GameObjects.Image {
           if (this.type == 'bomb') {
             var tween = this.scene.tweens.add({
               targets: this,
-              scale: 1.2,
+              scale: .7,
               duration: 100,
               yoyo: true
             })
