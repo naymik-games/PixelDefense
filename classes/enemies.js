@@ -8,14 +8,8 @@ var Enemy = new Phaser.Class({
 
       Phaser.GameObjects.Image.call(this, scene, offset + spawnPoints[spawnAlt].j * cellSize, offset + spawnPoints[spawnAlt].i * cellSize, 'rover', 0);
       // this.setScale(.8)
-      this.spawn = spawnPoints[spawnAlt]
-      if (spawnPoints.length > 1) {
-        if (spawnAlt == 0) {
-          spawnAlt = 1
-        } else {
-          spawnAlt = 0
-        }
-      }
+      //this.spawn = spawnPoints[spawnAlt]
+
       this.scene = scene
       this.end = endPoints[0]
       //console.log(this.spawn)
@@ -27,7 +21,7 @@ var Enemy = new Phaser.Class({
       this.frame = 0
       this.health = 0
       this.stunned = false
-
+      this.spawn = 0
       this.healthbar = scene.add.text(0, 0, "22", { fontSize: '30px', fill: '#fff', fontStyle: 'bold' });
       this.healthbar.setOrigin(0, 0);
       /* this.emitter = scene.add.particles('particle').createEmitter({
@@ -68,10 +62,11 @@ var Enemy = new Phaser.Class({
     // if (template.cost) this.totalCost += template.cost;
   },
   startOnPath: function (scene) {
-
+    this.spawn = spawnAlt
+    this.setPosition(offset + spawnPoints[this.spawn].j * cellSize, offset + spawnPoints[this.spawn].i * cellSize)
     this.healthbar.setVisible(true);
     this.setAlpha(1)
-    finder.findPath(this.spawn.j, this.spawn.i, this.end.j, this.end.i, function (route) {
+    finder.findPath(spawnPoints[spawnAlt].j, spawnPoints[spawnAlt].i, this.end.j, this.end.i, function (route) {
       // console.log('finding...')
       if (route === null) {
         console.log("Path was not found.");
@@ -81,6 +76,13 @@ var Enemy = new Phaser.Class({
         scene.movePlayer(route, this, this.speed)
       }
     }.bind(this));
+    if (spawnPoints.length > 1) {
+      if (spawnAlt == 0) {
+        spawnAlt = 1
+      } else {
+        spawnAlt = 0
+      }
+    }
   },
   receiveDamage: function (damage, scene, type) {
     if (type == 'stun') {
@@ -130,7 +132,7 @@ var Enemy = new Phaser.Class({
       this.timeline.stop()
       money.amount += this.reward
       scene.UI.moneyText.setText(money.amount)
-      this.setPosition(offset + this.spawn.j * cellSize, offset + this.spawn.i * cellSize)
+      this.setPosition(offset + spawnPoints[this.spawn].j * cellSize, offset + spawnPoints[this.spawn].i * cellSize)
       scene.killedInWave++
       scene.runCheck()
       this.healthbar.setVisible(false);
@@ -201,9 +203,9 @@ function getEnemy(x, y, distance) {
 let enemyTypes = [
   {
     name: 'Simple',
-    hp: 35,
+    hp: 40,
     reward: 1,
-    speed: 1000,
+    speed: 900,
     frame: 0,
     canShoot: false
   },
@@ -211,7 +213,7 @@ let enemyTypes = [
     name: 'Muscle',
     hp: 100,
     reward: 2,
-    speed: 1200,
+    speed: 1000,
     frame: 1,
     canShoot: false
   },
@@ -233,7 +235,7 @@ let enemyTypes = [
   },
   {
     name: 'Speedy 2',
-    hp: 150,
+    hp: 170,
     reward: 4,
     speed: 400,
     frame: 4,
@@ -243,7 +245,7 @@ let enemyTypes = [
     name: 'Stronger 2',
     hp: 375,
     reward: 4,
-    speed: 1000,
+    speed: 900,
     frame: 5,
     canShoot: false
   },
@@ -251,7 +253,7 @@ let enemyTypes = [
     name: 'Tank',
     hp: 650,
     reward: 5,
-    speed: 1200,
+    speed: 1100,
     frame: 6,
     canShoot: true
   },
@@ -259,7 +261,7 @@ let enemyTypes = [
     name: 'Boss',
     hp: 250,
     reward: 10,
-    speed: 1200,
+    speed: 1100,
     frame: 7,
     canShoot: true
   }

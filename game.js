@@ -23,6 +23,7 @@ const TOWERBASE = 5
 const TOWERUPBASE = 11
 
 let spawnPoints
+let spawns = []
 let endPoints
 let spawnAlt
 
@@ -318,6 +319,7 @@ class playGame extends Phaser.Scene {
     }
   }
   endWave() {
+    this.removeSpawnPoints()
     if (gameMode == 'endless') {
       var enemyList = this.createWave()
 
@@ -341,7 +343,7 @@ class playGame extends Phaser.Scene {
     this.killedInWave = 0
     this.launchNum = 0
     this.placeRandomBlocks(this.level.waves[this.onWave].addBlocks)
-
+    this.placeSpawnPoint(this.level.numberOfSpawnPoints)
 
   }
   createLevelWave() {
@@ -610,13 +612,14 @@ class playGame extends Phaser.Scene {
   movePlayer(route, enemy, speed) {
     enemy.tweens = [];
     enemy.timeline
+    var speedAdd = 50 * (this.onWave / 2)
     for (var i = 0; i < route.length - 1; i++) {
       var ex = route[i + 1].x;
       var ey = route[i + 1].y;
       enemy.tweens.push({
         targets: enemy,
-        x: { value: offset + ex * cellSize, duration: speed },
-        y: { value: offset + ey * cellSize, duration: speed }
+        x: { value: offset + ex * cellSize, duration: speed - speedAdd },
+        y: { value: offset + ey * cellSize, duration: speed - speedAdd }
       });
     }
 
@@ -665,6 +668,19 @@ class playGame extends Phaser.Scene {
 
 
   }
+  removeSpawnPoints() {
+    for (let i = 0; i < spawnPoints.length; i++) {
+      const point = spawnPoints[i];
+      this.removeSafeZone(point)
+      this.map[point.i][point.j] = BLANK
+    }
+    for (let i = 0; i < spawns.length; i++) {
+      const spawn = spawns[i];
+      spawn.destroy()
+    }
+    spawns.length = 0
+    spawnPoints.length = 0
+  }
   placeSpawnPoint(count) {
     for (let b = 0; b < count; b++) {
       var done = false
@@ -680,7 +696,8 @@ class playGame extends Phaser.Scene {
         //  var j = Phaser.Math.Between(0, this.cols - 1)
         if (this.map[i][j] == BLANK) {
           var block = this.add.image(offset + j * cellSize, offset + i * cellSize, 'block', 2)
-
+          block.point = b
+          spawns.push(block)
           this.map[i][j] = SPAWN
           this.setSafeZone({ i: i, j: j })
           spawnPoints.push({ i: i, j: j })
@@ -723,6 +740,14 @@ class playGame extends Phaser.Scene {
 
     }
 
+  }
+  removeSafeZone(center) {
+    for (let n = 0; n < neighborDirections.length; n++) {
+      const nei = neighborDirections[n];
+      if (this.validPick(center.i + nei[0], center.j + nei[1]) && this.map[center.i + nei[0]][center.j + nei[1]] == BLANK) {
+        this.map[center.i + nei[0]][center.j + nei[1]] = BLANK
+      }
+    }
   }
   setSafeZone(center) {
     for (let n = 0; n < neighborDirections.length; n++) {
