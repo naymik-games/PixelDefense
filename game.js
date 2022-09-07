@@ -97,7 +97,7 @@ class playGame extends Phaser.Scene {
 
         var enemyList = this.createWave()
 
-        var delays = [800, 900, 1000, 1100, 1200, 1300, 1400, 1500]
+        var delays = [700, 800, 800, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500]
         var spawnDelay = delays[Phaser.Math.Between(0, delays.length - 1)]
 
         this.level.waves.push({
@@ -324,7 +324,7 @@ class playGame extends Phaser.Scene {
       var enemyList = this.createWave()
 
       //var delays = [800, 900, 1000, 1100, 1200, 1300, 1400, 1500]
-      var spawnDelay = 1500 - this.onWave * 50
+      var spawnDelay = 1200 - this.onWave * 50
 
       this.level.waves.push({
         spawnRate: spawnDelay,
